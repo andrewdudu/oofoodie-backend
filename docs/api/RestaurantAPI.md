@@ -1,4 +1,4 @@
-# Product API
+# Resturant API
 
 ## GET Restaurant by ID
 
@@ -81,5 +81,67 @@
   "status": "Not Found",
   "message": "Restaurant with resto id {resto-id} is not found",
   "path": "/restaurants/{resto-id}"
+}
+```
+
+## GET Restaurant by Location
+
+- Endpoint : `/restaurants/location?lat=3.2&lng=3.2`
+- HTTP Method : `GET`
+
+- Request Header :
+  - Accept: `application/json`
+- Response Body (Success) :
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "data": [
+    {
+      "name": "The Magic of Nolem Gur",
+      "image": "base64",
+      "likes": 12,
+      "average-star": 4.9,
+      "distance": 4.2
+    }
+  ]
+}
+```
+
+## GET Restaurant by Keyword
+
+- Endpoint : `/restaurants/search?q=Magic`
+- HTTP Method : `GET`
+
+- Request Header :
+  - Accept: `application/json`
+- Response Body (Success) :
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "data": [
+    {
+      "name": "The Magic of Nolem Gur",
+      "image": "base64",
+      "likes": 12,
+      "average-star": 4.9,
+      "distance": 4.2
+    }
+  ]
+}
+```
+
+- Response Body (Fail) :
+
+```json
+{
+  "timestamp": "2019-08-23T04:22:26.690+0000",
+  "code": 404,
+  "status": "Not Found",
+  "message": "No Restaurant found with keyword Magic",
+  "path": "/restaurants/search?q=Magic"
 }
 ```
