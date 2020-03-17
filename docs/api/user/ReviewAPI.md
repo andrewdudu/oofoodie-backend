@@ -43,28 +43,3 @@
   "path": "/restaurants/{resto-id}"
 }
 ```
-
-## GET Restaurant by Location
-
-- Endpoint : `/restaurants/location?lat=3.2&lng=3.2`
-- HTTP Method : `GET`
-
-- Request Header :
-  - Accept: `application/json`
-- Response Body (Success) :
-
-```json
-{
-  "code": 200,
-  "status": "OK",
-  "data": [
-    {
-      "name": "The Magic of Nolem Gur",
-      "image": "base64",
-      "likes": 12,
-      "average-star": 4.9,
-      "distance": 4.2
-    }
-  ]
-}
-```

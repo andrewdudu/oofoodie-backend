@@ -2,7 +2,7 @@
 
 ## GET Restaurant by ID
 
-- Endpoint : `/restaurants/{resto-id}`
+- Endpoint : `/restaurants/id/{resto-id}`
 - HTTP Method : `GET`
 
 - Request Header :
@@ -143,5 +143,54 @@
   "status": "Not Found",
   "message": "No Restaurant found with keyword Magic",
   "path": "/restaurants/search?q=Magic"
+}
+```
+
+## GET Popular Restaurant
+
+- Endpoint : `/restaurants/popular`
+- HTTP Method : `GET`
+
+- Request Header :
+  - Accept: `application/json`
+- Response Body (Success) :
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "data": [
+    {
+      "name": "The Magic of Nolem Gur",
+      "image": "base64",
+      "likes": 12,
+      "average-star": 4.9,
+      "distance": 4.2
+    }
+  ]
+}
+```
+
+## GET Vouchers
+
+- Endpoint : `/vouchers`
+- HTTP Method : `GET`
+
+- Request Header :
+
+  - Accept: `application/json`
+
+- Response Body (Success) :
+
+```json
+{
+  "code": 200,
+  "status": "OK",
+  "data": [
+    {
+      "resto-id": "123123-123123-123123",
+      "image": "url"
+    }
+  ]
 }
 ```

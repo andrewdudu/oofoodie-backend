@@ -43,3 +43,47 @@
   "path": "/login"
 }
 ```
+
+## Forgot Password
+
+- Endpoint : `/forgot-password`
+- HTTP Method : `POST`
+- Request Body :
+
+```json
+{
+  "email": "example@email.com"
+}
+```
+
+- Request Header : + Accept: `application/json`
+- Response Body (Success) :
+
+```json
+{
+  "success": "true",
+  "message": "Please check your email"
+}
+```
+
+- Response Body (Fail) :
+
+```json
+{
+  "timestamp": "2019-08-23T04:22:26.690+0000",
+  "code": 400,
+  "status": "Bad Request",
+  "message": "Invalid Request: Invalid request format",
+  "path": "/forgot-password"
+}
+```
+
+```json
+{
+  "timestamp": "2019-08-23T04:22:26.690+0000",
+  "code": 404,
+  "status": "Not Found",
+  "message": "Account is not found with that email",
+  "path": "/forgot-password"
+}
+```
