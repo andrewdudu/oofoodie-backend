@@ -1,0 +1,15 @@
+POST http://localhost:8080/users
+Content-Type: application/json
+Accept: application/json
+X-User-Name: Andrew
+
+{
+  "name": "Andrew",
+  "password": "testtest",
+  "username": "andrewdudu",
+  "email": "example@example.com",
+  "likes": 12,
+  "credits": 10
+}
+
+###
