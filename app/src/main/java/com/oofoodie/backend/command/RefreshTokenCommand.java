@@ -1,4 +1,8 @@
 package com.oofoodie.backend.command;
 
-public interface RefreshTokenCommand {
+import com.blibli.oss.command.Command;
+import com.oofoodie.backend.models.request.RefreshRequest;
+import org.springframework.http.ResponseEntity;
+
+public interface RefreshTokenCommand extends Command<RefreshRequest, ResponseEntity<?>> {
 }

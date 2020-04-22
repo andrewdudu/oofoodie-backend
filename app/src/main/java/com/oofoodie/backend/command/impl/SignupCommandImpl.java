@@ -1,6 +1,5 @@
 package com.oofoodie.backend.command.impl;
 
-import com.blibli.oss.command.Command;
 import com.oofoodie.backend.command.SignupCommand;
 import com.oofoodie.backend.exception.BadRequestException;
 import com.oofoodie.backend.models.entity.User;
@@ -16,7 +15,7 @@ import reactor.core.publisher.Mono;
 import java.util.UUID;
 
 @Service
-public class SignupCommandImpl implements SignupCommand, Command<SignupRequest, LoginResponse> {
+public class SignupCommandImpl implements SignupCommand {
 
     @Autowired
     private BCryptPasswordEncoder passwordEncoder;

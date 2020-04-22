@@ -1,6 +1,5 @@
 package com.oofoodie.backend.command.impl;
 
-import com.blibli.oss.command.Command;
 import com.oofoodie.backend.command.RefreshTokenCommand;
 import com.oofoodie.backend.exception.AuthenticationFailException;
 import com.oofoodie.backend.handler.TokenProvider;
@@ -19,7 +18,7 @@ import reactor.core.publisher.Mono;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 
 @Service
-public class RefreshTokenCommandImpl implements RefreshTokenCommand, Command<RefreshRequest, ResponseEntity<?>> {
+public class RefreshTokenCommandImpl implements RefreshTokenCommand {
 
     @Value("${authentication.accessTokenExpirationInMs}")
     private Long ACCESS_TOKEN_EXPIRATION_IN_MS;

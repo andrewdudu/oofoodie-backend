@@ -1,6 +1,5 @@
 package com.oofoodie.backend.command.impl;
 
-import com.blibli.oss.command.Command;
 import com.oofoodie.backend.command.LoginCommand;
 import com.oofoodie.backend.handler.TokenProvider;
 import com.oofoodie.backend.models.entity.User;
@@ -22,7 +21,7 @@ import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 @Service
-public class LoginCommandImpl implements LoginCommand, Command<LoginRequest, ResponseEntity<?>> {
+public class LoginCommandImpl implements LoginCommand {
 
     @Value("${authentication.accessTokenExpirationInMs}")
     private Long ACCESS_TOKEN_EXPIRATION_IN_MS;
@@ -53,13 +52,11 @@ public class LoginCommandImpl implements LoginCommand, Command<LoginRequest, Res
 
     private Mono<ResponseEntity<?>> login(Boolean isUserExist, LoginRequest request) {
         if (!isUserExist)
-            return Mono.just(ResponseEntity.badRequest().body(new ApiResponse(400, "User does not exist", null)));
+            return Mono.fromCallable(() -> badRequest());
         else {
-            return getUser(request.getUsername())
+            return Mono.fromCallable(() -> getUser(request.getUsername()))
                 .map(user -> {
                     if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
-                        // TODO: generateToken parameter
-
                         String accessToken = tokenProvider.generateToken(user);
                         String refreshToken = tokenProvider.generateRefreshToken(request.getUsername());
                         return ResponseEntity.ok()
@@ -73,14 +70,19 @@ public class LoginCommandImpl implements LoginCommand, Command<LoginRequest, Res
         }
     }
 
-    private Mono<User> getUser(String username) {
+    private ResponseEntity badRequest() {
+        return ResponseEntity.badRequest().body(new ApiResponse(400, "User does not exist", null));
+    }
+
+    private User getUser(String username) {
         // check redis
         String key = "user-" + username;
         if (redisTemplate.hasKey(key)) {
-            return Mono.just((User) Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
+            return (User) Objects.requireNonNull(redisTemplate.opsForValue().get(key));
         }
         return userRepository.findByUsername(username)
-                .doOnNext(user -> redisTemplate.opsForValue().set(key, user, 30, TimeUnit.MINUTES));
+                .doOnNext(user -> redisTemplate.opsForValue().set(key, user, 30, TimeUnit.MINUTES))
+                .block();
     }
 
 }

@@ -20,7 +20,6 @@ import java.util.List;
 @Component
 public class SecurityContextRepository implements ServerSecurityContextRepository{
 
-
     @Value("${authentication.accessTokenCookieName}")
     private String accessTokenCookieName;
 
@@ -47,12 +46,14 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
     private String getJwtFromCookie(ServerHttpRequest request) {
         MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         List<HttpCookie> httpCookies = cookies.get(accessTokenCookieName);
-        for (HttpCookie cookie : httpCookies) {
-            if (cookie.getName().equals(accessTokenCookieName)) {
-                String accessToken = cookie.getValue();
-                if (accessToken == null) return null;
+        if (cookies.size() > 0) {
+            for (HttpCookie cookie : httpCookies) {
+                if (cookie.getName().equals(accessTokenCookieName)) {
+                    String accessToken = cookie.getValue();
+                    if (accessToken == null) return null;
 
-                return SecurityCipher.decrypt(cookie.getValue());
+                    return SecurityCipher.decrypt(cookie.getValue());
+                }
             }
         }
 
