@@ -46,7 +46,7 @@ public class SecurityContextRepository implements ServerSecurityContextRepositor
     private String getJwtFromCookie(ServerHttpRequest request) {
         MultiValueMap<String, HttpCookie> cookies = request.getCookies();
         List<HttpCookie> httpCookies = cookies.get(accessTokenCookieName);
-        if (cookies.size() > 0) {
+        if (httpCookies != null) {
             for (HttpCookie cookie : httpCookies) {
                 if (cookie.getName().equals(accessTokenCookieName)) {
                     String accessToken = cookie.getValue();

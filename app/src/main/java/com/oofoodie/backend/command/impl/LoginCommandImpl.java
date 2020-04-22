@@ -54,7 +54,7 @@ public class LoginCommandImpl implements LoginCommand {
         if (!isUserExist)
             return Mono.fromCallable(() -> badRequest());
         else {
-            return Mono.fromCallable(() -> getUser(request.getUsername()))
+            return getUser(request.getUsername())
                 .map(user -> {
                     if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                         String accessToken = tokenProvider.generateToken(user);
@@ -74,15 +74,14 @@ public class LoginCommandImpl implements LoginCommand {
         return ResponseEntity.badRequest().body(new ApiResponse(400, "User does not exist", null));
     }
 
-    private User getUser(String username) {
+    private Mono<User> getUser(String username) {
         // check redis
         String key = "user-" + username;
         if (redisTemplate.hasKey(key)) {
-            return (User) Objects.requireNonNull(redisTemplate.opsForValue().get(key));
+            return Mono.just((User) Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
         }
         return userRepository.findByUsername(username)
-                .doOnNext(user -> redisTemplate.opsForValue().set(key, user, 30, TimeUnit.MINUTES))
-                .block();
+                .doOnNext(user -> redisTemplate.opsForValue().set(key, user, 30, TimeUnit.MINUTES));
     }
 
 }
