@@ -3,6 +3,8 @@ package com.oofoodie.backend.handler;
 import com.oofoodie.backend.models.entity.Role;
 import com.oofoodie.backend.models.entity.User;
 import io.jsonwebtoken.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -76,17 +78,22 @@ public class TokenProvider implements Serializable {
             Jwts.parser().setSigningKey(TOKEN_SECRET).parse(token);
             return true;
         } catch (SignatureException ex) {
-            ex.printStackTrace();
+            printLog(ex);
         } catch (MalformedJwtException ex) {
-            ex.printStackTrace();
+            printLog(ex);
         } catch (ExpiredJwtException ex) {
-            ex.printStackTrace();
+            printLog(ex);
         } catch (UnsupportedJwtException ex) {
-            ex.printStackTrace();
+            printLog(ex);
         } catch (IllegalArgumentException ex) {
-            ex.printStackTrace();
+            printLog(ex);
         }
         return false;
+    }
+
+    private void printLog(Exception ex) {
+        Logger logger = LoggerFactory.getLogger(ex.getClass());
+        logger.error(ex.getMessage());
     }
 
 }
