@@ -26,7 +26,7 @@ public class SignupCommandImpl implements SignupCommand {
     @Override
     public Mono<LoginResponse> execute(SignupRequest request) {
         return Mono.just(request)
-                .flatMap(user -> userRepository.existsByUsername(user.getUsername()))
+                .flatMap(user -> userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
                 .flatMap(user -> saveUser(user, request));
     }
 
