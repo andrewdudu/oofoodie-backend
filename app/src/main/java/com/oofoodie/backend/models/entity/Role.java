@@ -1,13 +1,7 @@
 package com.oofoodie.backend.models.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
-
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
-public class Role {
-
-    private String name;
+public enum Role {
+    ROLE_ADMIN,
+    ROLE_USER,
+    ROLE_MERCHANT
 }

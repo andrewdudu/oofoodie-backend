@@ -11,10 +11,6 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.server.SecurityWebFilterChain;
 import reactor.core.publisher.Mono;
 
-/**
- * @author Dhiraj Ray
- *
- */
 @Configuration
 @EnableWebFluxSecurity
 public class SecurityConfig{
@@ -41,6 +37,12 @@ public class SecurityConfig{
                 .authorizeExchange()
                 .pathMatchers(patterns).permitAll()
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
+                .pathMatchers("/api/admin/**")
+                .hasRole("ROLE_ADMIN")
+                .pathMatchers("/api/merchant/**")
+                .hasRole("ROLE_MERCHANT")
+                .pathMatchers("/api/user/**")
+                .hasRole("ROLE_USER")
                 .anyExchange().authenticated()
                 .and()
                 .build();

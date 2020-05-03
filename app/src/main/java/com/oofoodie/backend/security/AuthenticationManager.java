@@ -1,6 +1,7 @@
 package com.oofoodie.backend.security;
 
 import com.oofoodie.backend.handler.TokenProvider;
+import com.oofoodie.backend.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
@@ -16,15 +17,14 @@ import java.util.stream.Collectors;
 
 import static com.oofoodie.backend.constants.Security.AUTHORITIES_KEY;
 
-/**
- * @author Dhiraj Ray
- *
- */
 @Component
 public class AuthenticationManager implements ReactiveAuthenticationManager {
 
     @Autowired
     private TokenProvider tokenProvider;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Override
     @SuppressWarnings("unchecked")
@@ -38,11 +38,16 @@ public class AuthenticationManager implements ReactiveAuthenticationManager {
         }
         if (username != null && ! tokenProvider.isTokenExpired(authToken)) {
             Claims claims = tokenProvider.getAllClaimsFromToken(authToken);
-            List<String> roles = claims.get(AUTHORITIES_KEY, List.class);
-            List<SimpleGrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role)).collect(Collectors.toList());
-            UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(username, username, authorities);
-            SecurityContextHolder.getContext().setAuthentication(new AuthenticatedUser(username, authorities));
-            return Mono.just(auth);
+            String finalUsername = username;
+            return userRepository.findByUsername(username)
+                    .flatMap(user -> {
+                        if (user == null) return Mono.empty();
+                        List<String> roles = claims.get(AUTHORITIES_KEY, List.class);
+                        List<SimpleGrantedAuthority> authorities = roles.stream().map(role -> new SimpleGrantedAuthority(role)).collect(Collectors.toList());
+                        UsernamePasswordAuthenticationToken auth = new UsernamePasswordAuthenticationToken(finalUsername, finalUsername, authorities);
+                        SecurityContextHolder.getContext().setAuthentication(new AuthenticatedUser(finalUsername, authorities));
+                        return Mono.just(auth);
+                    });
         } else {
             return Mono.empty();
         }
