@@ -33,6 +33,10 @@ public class TokenProvider implements Serializable {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
+    public String getEmailFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+
     public Date getExpirationDateFromToken(String token) {
         return getClaimFromToken(token, Claims::getExpiration);
     }

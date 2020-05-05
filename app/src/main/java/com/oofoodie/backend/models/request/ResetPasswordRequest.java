@@ -5,16 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ForgotPasswordRequest {
+public class ResetPasswordRequest {
 
-    @Email
     @NotBlank
-    private String email;
+    private String token;
+
+    @NotBlank
+    private String password;
 }

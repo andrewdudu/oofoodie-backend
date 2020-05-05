@@ -60,9 +60,9 @@ public class ForgotPasswordCommandImpl implements ForgotPasswordCommand {
     }
 
     private String generateToken(User user) {
-        String key = "reset-password-" + user.getUsername();
+        String key = "reset-password-" + user.getEmail();
         if (!redisTemplate.hasKey(key)) {
-            String token = tokenProvider.generatePasswordResetToken(user.getUsername());
+            String token = tokenProvider.generatePasswordResetToken(user.getEmail());
             redisTemplate.opsForValue().set(key, token, 1, TimeUnit.HOURS);
 
             return token;
