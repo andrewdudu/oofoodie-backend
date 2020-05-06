@@ -82,7 +82,7 @@ public class AuthController {
                 .subscribeOn(Schedulers.elastic());
     }
 
-    @GetMapping("/api/admin/test")
+    @GetMapping("/api/test")
     public Mono<Boolean> test() {
         return Mono.just(true);
     }
