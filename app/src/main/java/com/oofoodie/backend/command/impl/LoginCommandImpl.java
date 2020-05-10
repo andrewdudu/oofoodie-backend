@@ -62,7 +62,7 @@ public class LoginCommandImpl implements LoginCommand {
                         return ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, cookieUtil.createAccessTokenCookie(accessToken, ACCESS_TOKEN_EXPIRATION_IN_MS).toString())
                                 .header(HttpHeaders.SET_COOKIE, cookieUtil.createRefreshTokenCookie(refreshToken, REFRESH_TOKEN_EXPIRATION_IN_MS).toString())
-                                .body(new LoginResponse("Login Successfully"));
+                                .body(new LoginResponse("Login Successfully", user));
                     } else {
                         return ResponseEntity.badRequest().body(new ApiResponse(400, "Invalid credentials", null));
                     }

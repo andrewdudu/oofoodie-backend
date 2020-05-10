@@ -37,7 +37,7 @@ public class SignupCommandImpl implements SignupCommand {
             newUser.setId(UUID.randomUUID().toString());
             newUser.setPassword(passwordEncoder.encode(request.getPassword()));
             return userRepository.save(newUser)
-                    .map(savedUser -> new LoginResponse("User registered successfully"));
+                    .map(savedUser -> new LoginResponse("User registered successfully", newUser));
         }
 
         return Mono.error(new BadRequestException("User already exists"));

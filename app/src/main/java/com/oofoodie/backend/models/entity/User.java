@@ -1,5 +1,6 @@
 package com.oofoodie.backend.models.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,9 +22,11 @@ public class User extends BaseEntity {
     private String name;
 
     @Field(value = "roles")
+    @JsonIgnore
     private List<Role> roles;
 
     @Field(value = "password")
+    @JsonIgnore
     private String password;
 
     @Indexed
@@ -38,4 +41,10 @@ public class User extends BaseEntity {
 
     @Field(value = "credits")
     private Integer credits;
+
+    @Field(value = "timelines")
+    private List<Timeline> timelines;
+
+    @Field(value = "orders")
+    private List<Orders> orders;
 }
