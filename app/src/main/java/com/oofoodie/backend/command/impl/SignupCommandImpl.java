@@ -26,7 +26,7 @@ public class SignupCommandImpl implements SignupCommand {
     @Override
     public Mono<LoginResponse> execute(SignupRequest request) {
         return Mono.just(request)
-                .flatMap(user -> userRepository.existsByUsername(user.getUsername()))
+                .flatMap(user -> userRepository.existsByUsernameOrEmail(user.getUsername(), user.getEmail()))
                 .flatMap(user -> saveUser(user, request));
     }
 
@@ -37,7 +37,7 @@ public class SignupCommandImpl implements SignupCommand {
             newUser.setId(UUID.randomUUID().toString());
             newUser.setPassword(passwordEncoder.encode(request.getPassword()));
             return userRepository.save(newUser)
-                    .map(savedUser -> new LoginResponse("User registered successfully"));
+                    .map(savedUser -> new LoginResponse("User registered successfully", newUser));
         }
 
         return Mono.error(new BadRequestException("User already exists"));

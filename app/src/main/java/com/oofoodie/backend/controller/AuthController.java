@@ -3,13 +3,10 @@ package com.oofoodie.backend.controller;
 import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
-import com.oofoodie.backend.command.impl.LoginCommandImpl;
-import com.oofoodie.backend.command.impl.RefreshTokenCommandImpl;
-import com.oofoodie.backend.command.impl.SignupCommandImpl;
+import com.oofoodie.backend.command.impl.*;
 import com.oofoodie.backend.models.entity.Role;
-import com.oofoodie.backend.models.request.LoginRequest;
-import com.oofoodie.backend.models.request.RefreshRequest;
-import com.oofoodie.backend.models.request.SignupRequest;
+import com.oofoodie.backend.models.request.*;
+import com.oofoodie.backend.models.response.ForgotPasswordResponse;
 import com.oofoodie.backend.models.response.LoginResponse;
 import com.oofoodie.backend.util.SecurityCipher;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +64,20 @@ public class AuthController {
     public Mono<Response<LoginResponse>> signUpMerchant(@RequestBody SignupRequest request) {
         request.setRoles(new ArrayList<>(Collections.singleton(Role.ROLE_MERCHANT)));
         return commandExecutor.execute(SignupCommandImpl.class, request)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/auth/forgot-password")
+    public Mono<Response<ForgotPasswordResponse>> forgotPassword(@RequestBody ForgotPasswordRequest request) {
+        return commandExecutor.execute(ForgotPasswordCommandImpl.class, request)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/auth/reset-password")
+    public Mono<Response<String>> resetPassword(@RequestBody ResetPasswordRequest request) {
+        return commandExecutor.execute(ResetPasswordCommandImpl.class, request)
                 .map(response -> ResponseHelper.ok(response))
                 .subscribeOn(Schedulers.elastic());
     }

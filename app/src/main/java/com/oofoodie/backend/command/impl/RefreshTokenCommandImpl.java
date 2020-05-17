@@ -52,7 +52,7 @@ public class RefreshTokenCommandImpl implements RefreshTokenCommand {
                     return ResponseEntity.ok().contentType(APPLICATION_JSON)
                             .header(HttpHeaders.SET_COOKIE, cookieUtil.createAccessTokenCookie(newAccessToken, ACCESS_TOKEN_EXPIRATION_IN_MS).toString())
                             .header(HttpHeaders.SET_COOKIE, cookieUtil.createRefreshTokenCookie(request.getRefreshToken(), REFRESH_TOKEN_EXPIRATION_IN_MS).toString())
-                            .body(new LoginResponse("Access Token created"));
+                            .body(new LoginResponse("Access Token created", user));
                 });
     }
 

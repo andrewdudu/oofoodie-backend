@@ -5,17 +5,18 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotNull;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class MailRequest {
+
+    @Email
+    private String email;
 
     @NotNull
-    private String username;
-
-    @NotNull
-    private String password;
+    private String token;
 }

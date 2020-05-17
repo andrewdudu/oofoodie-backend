@@ -2,6 +2,7 @@ package com.oofoodie.backend.exception;
 
 import com.blibli.oss.command.exception.CommandValidationException;
 import com.oofoodie.backend.models.response.ResponseHelper;
+import io.jsonwebtoken.ExpiredJwtException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.codec.DecodingException;
@@ -15,6 +16,14 @@ public class ExceptionController {
 
     @ExceptionHandler(DecodingException.class)
     public ResponseEntity<?> handleException(DecodingException ex) {
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        log(ex);
+
+        return ResponseEntity.status(httpStatus).body(ResponseHelper.error(httpStatus, ex.getMessage()));
+    }
+
+    @ExceptionHandler(ExpiredJwtException.class)
+    public ResponseEntity<?> handleException(ExpiredJwtException ex) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
         log(ex);
 
