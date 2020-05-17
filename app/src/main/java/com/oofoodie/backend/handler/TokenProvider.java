@@ -25,10 +25,17 @@ public class TokenProvider implements Serializable {
     @Value("${authentication.refreshTokenExpirationInMs}")
     private Long REFRESH_TOKEN_EXPIRATION_IN_MS;
 
+    @Value("3600000")
+    private Long FORGOT_PASSWORD_TOKEN;
+
     @Value("${authentication.tokenSecret")
     private String TOKEN_SECRET;
 
     public String getUsernameFromToken(String token) {
+        return getClaimFromToken(token, Claims::getSubject);
+    }
+
+    public String getEmailFromToken(String token) {
         return getClaimFromToken(token, Claims::getSubject);
     }
 
@@ -69,6 +76,14 @@ public class TokenProvider implements Serializable {
                 .setSubject(subject)
                 .setIssuedAt(new Date(System.currentTimeMillis()))
                 .setExpiration(new Date(System.currentTimeMillis() + REFRESH_TOKEN_EXPIRATION_IN_MS))
+                .signWith(SignatureAlgorithm.HS512, TOKEN_SECRET)
+                .compact();
+    }
+
+    public String generatePasswordResetToken(String username) {
+        return Jwts.builder()
+                .setSubject(username)
+                .setExpiration(new Date(System.currentTimeMillis() + FORGOT_PASSWORD_TOKEN))
                 .signWith(SignatureAlgorithm.HS512, TOKEN_SECRET)
                 .compact();
     }

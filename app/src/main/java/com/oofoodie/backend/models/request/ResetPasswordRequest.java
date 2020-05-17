@@ -5,17 +5,17 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotNull;
+import javax.validation.constraints.NotBlank;
 
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoginRequest {
+public class ResetPasswordRequest {
 
-    @NotNull
-    private String username;
+    @NotBlank
+    private String token;
 
-    @NotNull
+    @NotBlank
     private String password;
 }
