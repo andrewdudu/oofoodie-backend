@@ -23,7 +23,7 @@ public class Restaurant extends BaseEntity {
     private String telephone;
 
     @Field(name = "location")
-    private String location;
+    private Location location;
 
     @Field(name = "address")
     private String address;
@@ -45,4 +45,7 @@ public class Restaurant extends BaseEntity {
 
     @Field(name = "likes")
     private Integer likes;
+
+    @Field(name = "status")
+    private boolean status;
 }

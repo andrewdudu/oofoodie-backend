@@ -47,4 +47,7 @@ public class User extends BaseEntity {
 
     @Field(value = "orders")
     private List<Orders> orders;
+
+    @Field(value = "reviews")
+    private List<Review> reviews;
 }
