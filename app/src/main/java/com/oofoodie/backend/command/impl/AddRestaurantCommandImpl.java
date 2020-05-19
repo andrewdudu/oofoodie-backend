@@ -1,5 +1,6 @@
 package com.oofoodie.backend.command.impl;
 
+import com.blibli.oss.command.CommandExecutor;
 import com.oofoodie.backend.command.AddRestaurantCommand;
 import com.oofoodie.backend.models.elastic.RestaurantLocation;
 import com.oofoodie.backend.models.entity.Location;
@@ -26,12 +27,16 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
     @Autowired
     private RestaurantRepository restaurantRepository;
 
+    @Autowired
+    private CommandExecutor commandExecutor;
+
     @Override
     public Mono<RestaurantResponse> execute(RestaurantRequest request) {
         String id = UUID.randomUUID().toString();
         Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
                 .subscribeOn(Schedulers.elastic())
                 .subscribe();
+        request.getImages().forEach(this::storeImg);
         return Mono.fromCallable(() -> structureRequest(request, id))
                 .flatMap(restaurant -> restaurantRepository.save(restaurant))
                 .map(restaurant -> structureResponse(restaurant));
@@ -62,5 +67,11 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
         resto.setId(id);
 
         return resto;
+    }
+
+    private void storeImg(String img) {
+        commandExecutor.execute(AddImageCommandImpl.class, img)
+                .subscribeOn(Schedulers.elastic())
+                .subscribe();
     }
 }
