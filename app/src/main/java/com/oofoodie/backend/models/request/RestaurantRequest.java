@@ -35,4 +35,7 @@ public class RestaurantRequest {
 
     @NotNull
     private List<String> images;
+
+    @NotNull
+    private OpenHourRequest openHour;
 }

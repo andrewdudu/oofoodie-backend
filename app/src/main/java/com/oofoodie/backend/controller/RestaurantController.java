@@ -19,7 +19,7 @@ public class RestaurantController {
     @Autowired
     private CommandExecutor commandExecutor;
 
-    @PostMapping("/restaurant")
+    @PostMapping("/api/restaurant")
     public Mono<Response<RestaurantResponse>> suggestRestaurant(@RequestBody RestaurantRequest request) {
         return commandExecutor.execute(AddRestaurantCommandImpl.class, request)
                 .map(response -> ResponseHelper.ok(response))
