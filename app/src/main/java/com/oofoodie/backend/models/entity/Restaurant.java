@@ -1,5 +1,6 @@
 package com.oofoodie.backend.models.entity;
 
+import com.oofoodie.backend.models.request.OpenHourRequest;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -23,7 +24,7 @@ public class Restaurant extends BaseEntity {
     private String telephone;
 
     @Field(name = "location")
-    private String location;
+    private Location location;
 
     @Field(name = "address")
     private String address;
@@ -37,6 +38,9 @@ public class Restaurant extends BaseEntity {
     @Field(name = "images")
     private List<String> images;
 
+    @Field(name = "openHour")
+    private OpenHourRequest openHour;
+
     @Field(name = "reviews")
     private List<Review> reviews;
 
@@ -45,4 +49,7 @@ public class Restaurant extends BaseEntity {
 
     @Field(name = "likes")
     private Integer likes;
+
+    @Field(name = "status")
+    private boolean status;
 }
