@@ -38,6 +38,14 @@ public class ExceptionController {
         return ResponseEntity.status(httpStatus).body(ResponseHelper.error(httpStatus, ex.getMessage()));
     }
 
+    @ExceptionHandler(NotFoundException.class)
+    public ResponseEntity<?> handleException(NotFoundException ex) {
+        HttpStatus httpStatus = HttpStatus.NOT_FOUND;
+        log(ex);
+
+        return ResponseEntity.status(httpStatus).body(ResponseHelper.error(httpStatus, ex.getMessage()));
+    }
+
     @ExceptionHandler(BadRequestException.class)
     public ResponseEntity<?> handleException(BadRequestException ex) {
         HttpStatus httpStatus = HttpStatus.BAD_REQUEST;

@@ -4,12 +4,11 @@ import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
 import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
+import com.oofoodie.backend.command.impl.GetRestaurantByIdCommandImpl;
 import com.oofoodie.backend.models.request.RestaurantRequest;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -22,6 +21,13 @@ public class RestaurantController {
     @PostMapping("/api/restaurant")
     public Mono<Response<RestaurantResponse>> suggestRestaurant(@RequestBody RestaurantRequest request) {
         return commandExecutor.execute(AddRestaurantCommandImpl.class, request)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/api/restaurant/{id}")
+    public Mono<Response<RestaurantResponse>> getById(@PathVariable String id) {
+        return commandExecutor.execute(GetRestaurantByIdCommandImpl.class, id)
                 .map(response -> ResponseHelper.ok(response))
                 .subscribeOn(Schedulers.elastic());
     }
