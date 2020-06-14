@@ -1,5 +1,6 @@
 package com.oofoodie.backend.models.response;
 
+import com.oofoodie.backend.models.entity.Location;
 import com.oofoodie.backend.models.entity.Menu;
 import com.oofoodie.backend.models.entity.Orders;
 import com.oofoodie.backend.models.entity.Review;
@@ -21,7 +22,7 @@ public class RestaurantResponse {
 
     private String telephone;
 
-    private String location;
+    private Location location;
 
     private String address;
 
