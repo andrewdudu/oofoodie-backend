@@ -2,7 +2,7 @@ package com.oofoodie.backend.command.impl;
 
 import com.oofoodie.backend.command.LoginCommand;
 import com.oofoodie.backend.handler.TokenProvider;
-import com.oofoodie.backend.models.entity.User;
+import com.oofoodie.backend.helper.GetRedisData;
 import com.oofoodie.backend.models.request.LoginRequest;
 import com.oofoodie.backend.models.response.ApiResponse;
 import com.oofoodie.backend.models.response.LoginResponse;
@@ -10,15 +10,11 @@ import com.oofoodie.backend.repository.UserRepository;
 import com.oofoodie.backend.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
-
-import java.util.Objects;
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class LoginCommandImpl implements LoginCommand {
@@ -42,7 +38,7 @@ public class LoginCommandImpl implements LoginCommand {
     private UserRepository userRepository;
 
     @Autowired
-    private RedisTemplate<Object, Object> redisTemplate;
+    private GetRedisData getRedisData;
 
     @Override
     public Mono<ResponseEntity<?>> execute(LoginRequest request) {
@@ -54,7 +50,7 @@ public class LoginCommandImpl implements LoginCommand {
         if (!isUserExist)
             return Mono.fromCallable(() -> badRequest());
         else {
-            return getUser(request.getUsername())
+            return getRedisData.getUser(request.getUsername())
                 .map(user -> {
                     if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
                         String accessToken = tokenProvider.generateToken(user);
@@ -73,15 +69,4 @@ public class LoginCommandImpl implements LoginCommand {
     private ResponseEntity badRequest() {
         return ResponseEntity.badRequest().body(new ApiResponse(400, "User does not exist", null));
     }
-
-    private Mono<User> getUser(String username) {
-        // check redis
-        String key = "user-" + username;
-        if (redisTemplate.hasKey(key)) {
-            return Mono.just((User) Objects.requireNonNull(redisTemplate.opsForValue().get(key)));
-        }
-        return userRepository.findByUsername(username)
-                .doOnNext(user -> redisTemplate.opsForValue().set(key, user, 30, TimeUnit.MINUTES));
-    }
-
 }

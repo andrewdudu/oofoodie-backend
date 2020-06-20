@@ -4,10 +4,14 @@ import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
 import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
+import com.oofoodie.backend.command.impl.AddReviewCommandImpl;
 import com.oofoodie.backend.command.impl.GetRestaurantByIdCommandImpl;
 import com.oofoodie.backend.models.request.RestaurantRequest;
+import com.oofoodie.backend.models.request.ReviewRequest;
 import com.oofoodie.backend.models.response.RestaurantResponse;
+import com.oofoodie.backend.models.response.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
@@ -28,6 +32,15 @@ public class RestaurantController {
     @GetMapping("/api/restaurant/{id}")
     public Mono<Response<RestaurantResponse>> getById(@PathVariable String id) {
         return commandExecutor.execute(GetRestaurantByIdCommandImpl.class, id)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/user/restaurant/{id}/review")
+    public Mono<Response<ReviewResponse>> review(@PathVariable String id, @RequestBody ReviewRequest request, Authentication authentication) {
+        request.setRestoId(id);
+        request.setUser(authentication.getName());
+        return commandExecutor.execute(AddReviewCommandImpl.class, request)
                 .map(response -> ResponseHelper.ok(response))
                 .subscribeOn(Schedulers.elastic());
     }
