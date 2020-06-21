@@ -18,7 +18,7 @@ public class ReviewRequest {
 
     @NotNull
     @Max(5)
-    @Min(0)
+    @Min(1)
     private Integer star;
 
     @NotBlank

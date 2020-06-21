@@ -34,13 +34,15 @@ public class RestaurantResponse {
 
     private String image;
 
+    private RatingStats ratingStats;
+
     private List<Review> reviews;
 
     private List<Menu> menus;
 
     private List<Orders> orders;
 
-    private Integer likes;
+    private List<String> likes;
 
     private String status;
 }

@@ -48,7 +48,7 @@ public class Restaurant extends BaseEntity {
     private List<Menu> menus;
 
     @Field(name = "likes")
-    private Integer likes;
+    private List<String> likes;
 
     @Field(name = "status")
     private boolean status;
