@@ -39,8 +39,8 @@ public class RestaurantController {
                 .subscribeOn(Schedulers.elastic());
     }
 
-    @PostMapping("/api/user/restaurant/{id}/review")
-    public Mono<Response<ReviewResponse>> review(@PathVariable String id, @RequestBody ReviewRequest request, Authentication authentication) {
+    @PostMapping("/api/user/restaurant/review")
+    public Mono<Response<ReviewResponse>> review(@RequestHeader("restaurant-id") String id, @RequestBody ReviewRequest request, Authentication authentication) {
         request.setRestoId(id);
         request.setUser(authentication.getName());
         return commandExecutor.execute(AddReviewCommandImpl.class, request)
