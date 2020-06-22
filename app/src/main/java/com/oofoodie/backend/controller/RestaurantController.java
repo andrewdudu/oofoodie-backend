@@ -48,8 +48,8 @@ public class RestaurantController {
                 .subscribeOn(Schedulers.elastic());
     }
 
-    @PostMapping("/api/user/restaurant/{id}/like")
-    public Mono<Response<LikeResponse>> like(@PathVariable String id, Authentication authentication) {
+    @PostMapping("/api/user/restaurant/like")
+    public Mono<Response<LikeResponse>> like(@RequestHeader("restaurant-id") String id, Authentication authentication) {
         LikeRequest request = LikeRequest.builder()
                 .restoId(id)
                 .username(authentication.getName())
