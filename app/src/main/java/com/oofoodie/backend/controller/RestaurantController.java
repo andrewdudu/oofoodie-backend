@@ -6,8 +6,11 @@ import com.blibli.oss.common.response.ResponseHelper;
 import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
 import com.oofoodie.backend.command.impl.AddReviewCommandImpl;
 import com.oofoodie.backend.command.impl.GetRestaurantByIdCommandImpl;
+import com.oofoodie.backend.command.impl.LikeRestaurantCommandImpl;
+import com.oofoodie.backend.models.request.LikeRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
 import com.oofoodie.backend.models.request.ReviewRequest;
+import com.oofoodie.backend.models.response.LikeResponse;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import com.oofoodie.backend.models.response.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +44,18 @@ public class RestaurantController {
         request.setRestoId(id);
         request.setUser(authentication.getName());
         return commandExecutor.execute(AddReviewCommandImpl.class, request)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/user/restaurant/{id}/like")
+    public Mono<Response<LikeResponse>> like(@PathVariable String id, Authentication authentication) {
+        LikeRequest request = LikeRequest.builder()
+                .restoId(id)
+                .username(authentication.getName())
+                .build();
+
+        return commandExecutor.execute(LikeRestaurantCommandImpl.class, request)
                 .map(response -> ResponseHelper.ok(response))
                 .subscribeOn(Schedulers.elastic());
     }
