@@ -3,13 +3,11 @@ package com.oofoodie.backend.controller;
 import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
-import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
-import com.oofoodie.backend.command.impl.AddReviewCommandImpl;
-import com.oofoodie.backend.command.impl.GetRestaurantByIdCommandImpl;
-import com.oofoodie.backend.command.impl.LikeRestaurantCommandImpl;
+import com.oofoodie.backend.command.impl.*;
 import com.oofoodie.backend.models.request.LikeRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
 import com.oofoodie.backend.models.request.ReviewRequest;
+import com.oofoodie.backend.models.request.command.BeenThereCommandRequest;
 import com.oofoodie.backend.models.response.LikeResponse;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import com.oofoodie.backend.models.response.ReviewResponse;
@@ -57,6 +55,18 @@ public class RestaurantController {
 
         return commandExecutor.execute(LikeRestaurantCommandImpl.class, request)
                 .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/user/restaurant/been-there")
+    public Mono<Response<LikeResponse>> beenThere(@RequestHeader("restaurant-id") String id, Authentication authentication) {
+        BeenThereCommandRequest request = BeenThereCommandRequest.builder()
+                .restoId(id)
+                .username(authentication.getName())
+                .build();
+
+        return commandExecutor.execute(RestaurantBeenThereCommandImpl.class, request)
+                .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
     }
 

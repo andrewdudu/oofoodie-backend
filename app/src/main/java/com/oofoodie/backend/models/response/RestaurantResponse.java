@@ -36,6 +36,8 @@ public class RestaurantResponse {
 
     private RatingStats ratingStats;
 
+    private List<String> beenThere;
+
     private List<Review> reviews;
 
     private List<Menu> menus;
