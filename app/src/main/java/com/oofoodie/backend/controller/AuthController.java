@@ -81,9 +81,4 @@ public class AuthController {
                 .map(response -> ResponseHelper.ok(response))
                 .subscribeOn(Schedulers.elastic());
     }
-
-    @GetMapping("/api/test")
-    public Mono<Boolean> test() {
-        return Mono.just(true);
-    }
 }

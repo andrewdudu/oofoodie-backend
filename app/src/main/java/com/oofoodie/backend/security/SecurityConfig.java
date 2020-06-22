@@ -23,7 +23,7 @@ public class SecurityConfig{
 
     @Bean
     SecurityWebFilterChain springWebFilterChain(ServerHttpSecurity http) {
-        String[] patterns = new String[] {"/auth/**"};
+        String[] patterns = new String[] {"/auth/**", "/api/**"};
         return http.cors().disable()
                 .exceptionHandling()
                 .authenticationEntryPoint((swe, e) -> Mono.fromRunnable(() -> {
@@ -35,7 +35,6 @@ public class SecurityConfig{
                 .authenticationManager(authenticationManager)
                 .securityContextRepository(securityContextRepository)
                 .authorizeExchange()
-                .pathMatchers(patterns).permitAll()
                 .pathMatchers(HttpMethod.OPTIONS).permitAll()
                 .pathMatchers("/api/admin/**")
                 .hasAuthority("ROLE_ADMIN")
@@ -43,6 +42,7 @@ public class SecurityConfig{
                 .hasAuthority("ROLE_MERCHANT")
                 .pathMatchers("/api/user/**")
                 .hasAuthority("ROLE_USER")
+                .pathMatchers(patterns).permitAll()
                 .anyExchange().authenticated()
                 .and()
                 .build();

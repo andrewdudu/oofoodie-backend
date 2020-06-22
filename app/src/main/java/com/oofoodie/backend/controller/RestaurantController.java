@@ -4,12 +4,18 @@ import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
 import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
+import com.oofoodie.backend.command.impl.AddReviewCommandImpl;
+import com.oofoodie.backend.command.impl.GetRestaurantByIdCommandImpl;
+import com.oofoodie.backend.command.impl.LikeRestaurantCommandImpl;
+import com.oofoodie.backend.models.request.LikeRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
+import com.oofoodie.backend.models.request.ReviewRequest;
+import com.oofoodie.backend.models.response.LikeResponse;
 import com.oofoodie.backend.models.response.RestaurantResponse;
+import com.oofoodie.backend.models.response.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
 
@@ -22,6 +28,34 @@ public class RestaurantController {
     @PostMapping("/api/restaurant")
     public Mono<Response<RestaurantResponse>> suggestRestaurant(@RequestBody RestaurantRequest request) {
         return commandExecutor.execute(AddRestaurantCommandImpl.class, request)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/api/restaurant/{id}")
+    public Mono<Response<RestaurantResponse>> getById(@PathVariable String id) {
+        return commandExecutor.execute(GetRestaurantByIdCommandImpl.class, id)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/user/restaurant/{id}/review")
+    public Mono<Response<ReviewResponse>> review(@PathVariable String id, @RequestBody ReviewRequest request, Authentication authentication) {
+        request.setRestoId(id);
+        request.setUser(authentication.getName());
+        return commandExecutor.execute(AddReviewCommandImpl.class, request)
+                .map(response -> ResponseHelper.ok(response))
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/user/restaurant/{id}/like")
+    public Mono<Response<LikeResponse>> like(@PathVariable String id, Authentication authentication) {
+        LikeRequest request = LikeRequest.builder()
+                .restoId(id)
+                .username(authentication.getName())
+                .build();
+
+        return commandExecutor.execute(LikeRestaurantCommandImpl.class, request)
                 .map(response -> ResponseHelper.ok(response))
                 .subscribeOn(Schedulers.elastic());
     }

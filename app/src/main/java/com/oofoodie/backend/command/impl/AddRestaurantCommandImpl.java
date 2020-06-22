@@ -33,25 +33,26 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
     @Override
     public Mono<RestaurantResponse> execute(RestaurantRequest request) {
         String id = UUID.randomUUID().toString();
-        Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
-                .subscribeOn(Schedulers.elastic())
-                .subscribe();
-        request.getImages().forEach(this::storeImg);
-        return Mono.fromCallable(() -> structureRequest(request, id))
+//        Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
+//                .subscribeOn(Schedulers.elastic())
+//                .subscribe();
+        return Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
+                .flatMap(restaurantLocation -> storeImg(request.getImage()))
+                .map(img -> structureRequest(request, id, img))
                 .flatMap(restaurant -> restaurantRepository.save(restaurant))
                 .map(restaurant -> structureResponse(restaurant));
     }
 
-    private RestaurantLocation saveElasticLocation(Location location, String id) {
+    private Mono<RestaurantLocation> saveElasticLocation(Location location, String id) {
         if (location != null && location.getLat() != null && location.getLon() != null) {
             GeoPoint geoPoint = new GeoPoint(location.getLat(), location.getLon());
             RestaurantLocation restoLocation = new RestaurantLocation();
             restoLocation.setLocation(geoPoint);
             restoLocation.setRestoId(id);
 
-            return restaurantLocationRepository.save(restoLocation);
+            return Mono.just(restaurantLocationRepository.save(restoLocation));
         }
-        return new RestaurantLocation();
+        return Mono.empty();
     }
 
     private RestaurantResponse structureResponse(Restaurant restaurant) {
@@ -61,17 +62,17 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
         return response;
     }
 
-    private Restaurant structureRequest(RestaurantRequest request, String id) {
+    private Restaurant structureRequest(RestaurantRequest request, String id, String img) {
         Restaurant resto = new Restaurant();
         BeanUtils.copyProperties(request, resto);
         resto.setId(id);
+        resto.setImage(img);
 
         return resto;
     }
 
-    private void storeImg(String img) {
-        commandExecutor.execute(AddImageCommandImpl.class, img)
-                .subscribeOn(Schedulers.elastic())
-                .subscribe();
+    private Mono<String> storeImg(String img) {
+        return commandExecutor.execute(AddImageCommandImpl.class, img)
+                .subscribeOn(Schedulers.elastic());
     }
 }
