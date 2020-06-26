@@ -18,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 public class RestaurantResponse {
 
+    private String id;
+
     private String name;
 
     private String telephone;

@@ -8,6 +8,7 @@ import com.oofoodie.backend.models.request.LikeRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
 import com.oofoodie.backend.models.request.ReviewRequest;
 import com.oofoodie.backend.models.request.command.BeenThereCommandRequest;
+import com.oofoodie.backend.models.request.command.NearbyRestaurantCommandRequest;
 import com.oofoodie.backend.models.response.LikeResponse;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import com.oofoodie.backend.models.response.ReviewResponse;
@@ -16,6 +17,8 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
+
+import java.util.List;
 
 @RestController
 public class RestaurantController {
@@ -66,6 +69,18 @@ public class RestaurantController {
                 .build();
 
         return commandExecutor.execute(RestaurantBeenThereCommandImpl.class, request)
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/api/restaurant/nearby")
+    public Mono<Response<List<RestaurantResponse>>> nearbyRestaurant(@RequestParam("lat") Double lat, @RequestParam("lon") Double lon) {
+        NearbyRestaurantCommandRequest request = NearbyRestaurantCommandRequest.builder()
+                .lat(lat)
+                .lon(lon)
+                .build();
+
+        return commandExecutor.execute(NearbyRestaurantCommandImpl.class, request)
                 .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
     }
