@@ -37,7 +37,7 @@ public class User extends BaseEntity {
     private String email;
 
     @Field(value = "likes")
-    private Integer likes;
+    private List<String> likes;
 
     @Field(value = "credits")
     private Integer credits;

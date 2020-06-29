@@ -7,7 +7,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.NotNull;
-import java.util.List;
 
 @Data
 @Builder
@@ -34,7 +33,7 @@ public class RestaurantRequest {
     private String cuisine;
 
     @NotNull
-    private List<String> images;
+    private String image;
 
     @NotNull
     private OpenHourRequest openHour;

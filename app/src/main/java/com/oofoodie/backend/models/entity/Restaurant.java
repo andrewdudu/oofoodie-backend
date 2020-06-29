@@ -36,7 +36,7 @@ public class Restaurant extends BaseEntity {
     private String cuisine;
 
     @Field(name = "images")
-    private List<String> images;
+    private String image;
 
     @Field(name = "openHour")
     private OpenHourRequest openHour;
@@ -48,7 +48,7 @@ public class Restaurant extends BaseEntity {
     private List<Menu> menus;
 
     @Field(name = "likes")
-    private Integer likes;
+    private List<String> likes;
 
     @Field(name = "status")
     private boolean status;

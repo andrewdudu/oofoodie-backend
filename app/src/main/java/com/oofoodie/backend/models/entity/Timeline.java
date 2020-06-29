@@ -31,4 +31,7 @@ public class Timeline extends BaseEntity {
 
     @Field(value = "review_id")
     private String reviewId;
+
+    @Field(value = "username")
+    private String username;
 }

@@ -15,7 +15,7 @@ import org.springframework.data.mongodb.core.mapping.Field;
 public class Review extends BaseEntity {
 
     @Field(name = "user")
-    private User user;
+    private String user;
 
     @Field(name = "resto_id")
     private String restoId;
@@ -25,7 +25,4 @@ public class Review extends BaseEntity {
 
     @Field(name = "comment")
     private String comment;
-
-    @Field(name = "time")
-    private String time;
 }
