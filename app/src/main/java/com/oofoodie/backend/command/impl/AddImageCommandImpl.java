@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.nio.file.Paths;
 import java.util.UUID;
 
 @Service
@@ -21,6 +20,6 @@ public class AddImageCommandImpl implements AddImageCommand {
 
     @Override
     public Mono<String> execute(String fileStr) {
-        return Mono.fromCallable(() -> storeImageHelper.store(fileStr, UUID.randomUUID().toString() + ".png", Paths.get(this.locationImage)));
+        return Mono.fromCallable(() -> storeImageHelper.store(fileStr, UUID.randomUUID().toString() + ".png", this.locationImage));
     }
 }

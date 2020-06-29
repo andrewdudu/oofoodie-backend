@@ -9,14 +9,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
 import java.util.Base64;
 
 @Component
 public class StoreImageHelper {
 
-    public String store(String fileStr, String fileName, Path path) {
+    public String store(String fileStr, String fileName, String pathString) {
         Base64DecodedMultipartFile file;
+        Path path = Paths.get(pathString);
 
         byte[] decodedString = Base64.getDecoder().decode(fileStr);
         file = new Base64DecodedMultipartFile(decodedString);
