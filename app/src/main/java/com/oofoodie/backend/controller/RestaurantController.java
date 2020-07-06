@@ -3,6 +3,7 @@ package com.oofoodie.backend.controller;
 import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
+import com.oofoodie.backend.command.SearchRestaurantCommand;
 import com.oofoodie.backend.command.impl.*;
 import com.oofoodie.backend.models.request.LikeRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
@@ -81,6 +82,13 @@ public class RestaurantController {
                 .build();
 
         return commandExecutor.execute(NearbyRestaurantCommandImpl.class, request)
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/api/restaurant/search")
+    public Mono<Response<List<RestaurantResponse>>> searchRestaurant(@RequestParam("q") String query) {
+        return commandExecutor.execute(SearchRestaurantCommand.class, query)
                 .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
     }
