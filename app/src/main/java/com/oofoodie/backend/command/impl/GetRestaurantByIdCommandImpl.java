@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class GetRestaurantByIdCommandImpl implements GetRestaurantByIdCommand {
@@ -29,7 +30,7 @@ public class GetRestaurantByIdCommandImpl implements GetRestaurantByIdCommand {
 
     private RestaurantResponse constructResponse(Restaurant restaurant) {
         RestaurantResponse response = new RestaurantResponse();
-        if (restaurant.getReviews() != null) response.setRatingStats(calculateRatingStats(restaurant));
+        if (!Objects.isNull(restaurant.getReviews())) response.setRatingStats(calculateRatingStats(restaurant));
         BeanUtils.copyProperties(restaurant, response);
 
         return response;

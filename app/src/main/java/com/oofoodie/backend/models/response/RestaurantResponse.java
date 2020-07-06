@@ -18,6 +18,8 @@ import java.util.List;
 @AllArgsConstructor
 public class RestaurantResponse {
 
+    private String id;
+
     private String name;
 
     private String telephone;
@@ -35,6 +37,8 @@ public class RestaurantResponse {
     private String image;
 
     private RatingStats ratingStats;
+
+    private List<String> beenThere;
 
     private List<Review> reviews;
 
