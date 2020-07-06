@@ -11,6 +11,7 @@ import com.oofoodie.backend.repository.RestaurantLocationRepository;
 import com.oofoodie.backend.repository.RestaurantRepository;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.elasticsearch.ElasticsearchException;
 import org.springframework.data.elasticsearch.core.geo.GeoPoint;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -33,14 +34,12 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
     @Override
     public Mono<RestaurantResponse> execute(RestaurantRequest request) {
         String id = UUID.randomUUID().toString();
-//        Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
-//                .subscribeOn(Schedulers.elastic())
-//                .subscribe();
         return Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
                 .flatMap(restaurantLocation -> storeImg(request.getImage()))
                 .map(img -> structureRequest(request, id, img))
                 .flatMap(restaurant -> restaurantRepository.save(restaurant))
-                .map(restaurant -> structureResponse(restaurant));
+                .map(restaurant -> structureResponse(restaurant))
+                .switchIfEmpty(Mono.error(new ElasticsearchException("Fail to save")));
     }
 
     private Mono<RestaurantLocation> saveElasticLocation(Location location, String id) {
