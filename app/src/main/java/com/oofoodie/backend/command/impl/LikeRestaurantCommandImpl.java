@@ -29,8 +29,7 @@ public class LikeRestaurantCommandImpl implements LikeRestaurantCommand {
 
     @Override
     public Mono<LikeResponse> execute(LikeRequest request) {
-        // TODO: Find by id with status
-        return restaurantRepository.findById(request.getRestoId())
+        return restaurantRepository.findByIdAndStatus(request.getRestoId(), true)
                 .flatMap(restaurant -> saveRestaurantLike(restaurant, request))
                 .flatMap(user -> saveUserLike(user, request))
                 .map(user -> new LikeResponse("success"));

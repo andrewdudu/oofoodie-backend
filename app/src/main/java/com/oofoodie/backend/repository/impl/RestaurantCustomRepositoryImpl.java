@@ -10,7 +10,7 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Flux;
 
 @Repository
-public class RestaurantRepositoryImpl implements RestaurantCustomRepository {
+public class RestaurantCustomRepositoryImpl implements RestaurantCustomRepository {
 
     @Autowired
     ReactiveMongoTemplate reactiveMongoTemplate;

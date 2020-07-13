@@ -20,8 +20,7 @@ public class RestaurantBeenThereCommandImpl implements RestaurantBeenThereComman
 
     @Override
     public Mono<LikeResponse> execute(BeenThereCommandRequest request) {
-        // TODO: find restaurant by id and status
-        return restaurantRepository.findById(request.getRestoId())
+        return restaurantRepository.findByIdAndStatus(request.getRestoId(), true)
                 .flatMap(restaurant -> addBeenThere(restaurant, request))
                 .map(restaurant -> new LikeResponse("success"));
     }
