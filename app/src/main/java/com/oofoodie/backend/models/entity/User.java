@@ -22,7 +22,6 @@ public class User extends BaseEntity {
     private String name;
 
     @Field(value = "roles")
-    @JsonIgnore
     private List<Role> roles;
 
     @Field(value = "password")
