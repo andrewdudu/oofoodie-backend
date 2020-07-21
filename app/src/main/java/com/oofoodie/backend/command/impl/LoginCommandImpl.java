@@ -3,7 +3,7 @@ package com.oofoodie.backend.command.impl;
 import com.oofoodie.backend.command.LoginCommand;
 import com.oofoodie.backend.handler.TokenProvider;
 import com.oofoodie.backend.helper.GetRedisData;
-import com.oofoodie.backend.models.request.LoginRequest;
+import com.oofoodie.backend.models.request.command.LoginCommandRequest;
 import com.oofoodie.backend.models.response.ApiResponse;
 import com.oofoodie.backend.models.response.LoginResponse;
 import com.oofoodie.backend.repository.UserRepository;
@@ -41,18 +41,18 @@ public class LoginCommandImpl implements LoginCommand {
     private GetRedisData getRedisData;
 
     @Override
-    public Mono<ResponseEntity<?>> execute(LoginRequest request) {
+    public Mono<ResponseEntity<?>> execute(LoginCommandRequest request) {
         return userRepository.existsByUsername(request.getUsername())
                 .flatMap(user -> login(user, request));
     }
 
-    private Mono<ResponseEntity<?>> login(Boolean isUserExist, LoginRequest request) {
+    private Mono<ResponseEntity<?>> login(Boolean isUserExist, LoginCommandRequest request) {
         if (!isUserExist)
             return Mono.fromCallable(() -> badRequest());
         else {
             return getRedisData.getUser(request.getUsername())
                 .map(user -> {
-                    if (passwordEncoder.matches(request.getPassword(), user.getPassword())) {
+                    if (passwordEncoder.matches(request.getPassword(), user.getPassword()) && user.getRoles().contains(request.getRole())) {
                         String accessToken = tokenProvider.generateToken(user);
                         String refreshToken = tokenProvider.generateRefreshToken(request.getUsername());
                         return ResponseEntity.ok()

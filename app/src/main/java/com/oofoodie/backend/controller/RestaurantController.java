@@ -11,6 +11,7 @@ import com.oofoodie.backend.models.request.LikeRequest;
 import com.oofoodie.backend.models.request.PopularRestaurantRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
 import com.oofoodie.backend.models.request.ReviewRequest;
+import com.oofoodie.backend.models.request.command.ApprovePendingRestaurantCommandRequest;
 import com.oofoodie.backend.models.request.command.BeenThereCommandRequest;
 import com.oofoodie.backend.models.request.command.NearbyRestaurantCommandRequest;
 import com.oofoodie.backend.models.response.LikeResponse;
@@ -109,6 +110,27 @@ public class RestaurantController {
         return commandExecutor.execute(GetPopularRestaurantCommand.class, "")
                 .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/api/admin/restaurant")
+    public Mono<Response<List<RestaurantResponse>>> getAllRestaurant() {
+        return commandExecutor.execute(GetAllPendingRestaurantCommandImpl.class, "")
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/admin/restaurant/{restaurantId}")
+    public Mono<Response<RestaurantResponse>> approvePendingRestaurant(@PathVariable String restaurantId) {
+        return commandExecutor.execute(ApprovePendingRestaurantCommandImpl.class, constructApprovePendingRestaurantCommandRequest(restaurantId))
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+
+    }
+
+    private ApprovePendingRestaurantCommandRequest constructApprovePendingRestaurantCommandRequest(String restaurantId) {
+        return ApprovePendingRestaurantCommandRequest.builder()
+                .restaurantId(restaurantId)
+                .build();
     }
 
 //    @PostMapping("/auth/elastic")
