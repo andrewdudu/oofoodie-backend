@@ -3,14 +3,18 @@ package com.oofoodie.backend.controller;
 import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
+import com.oofoodie.backend.command.AddPopularRestaurantCommand;
+import com.oofoodie.backend.command.GetPopularRestaurantCommand;
 import com.oofoodie.backend.command.SearchRestaurantCommand;
 import com.oofoodie.backend.command.impl.*;
 import com.oofoodie.backend.models.request.LikeRequest;
+import com.oofoodie.backend.models.request.PopularRestaurantRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
 import com.oofoodie.backend.models.request.ReviewRequest;
 import com.oofoodie.backend.models.request.command.BeenThereCommandRequest;
 import com.oofoodie.backend.models.request.command.NearbyRestaurantCommandRequest;
 import com.oofoodie.backend.models.response.LikeResponse;
+import com.oofoodie.backend.models.response.PopularRestaurantResponse;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import com.oofoodie.backend.models.response.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -89,6 +93,20 @@ public class RestaurantController {
     @GetMapping("/api/restaurant/search")
     public Mono<Response<List<RestaurantResponse>>> searchRestaurant(@RequestParam("q") String query) {
         return commandExecutor.execute(SearchRestaurantCommand.class, query)
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/restaurant/popular")
+    public Mono<Response<PopularRestaurantResponse>> addPopularRestaurant(@RequestBody PopularRestaurantRequest request) {
+        return commandExecutor.execute(AddPopularRestaurantCommand.class, request)
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/api/restaurant/popular")
+    public Mono<Response<List<RestaurantResponse>>> getPopularRestaurant() {
+        return commandExecutor.execute(GetPopularRestaurantCommand.class, "")
                 .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
     }
