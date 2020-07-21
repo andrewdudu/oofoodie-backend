@@ -30,7 +30,7 @@ public class NearbyRestaurantCommandImpl implements NearbyRestaurantCommand {
     @Override
     public Mono<List<RestaurantResponse>> execute(NearbyRestaurantCommandRequest request) {
         return searchByLocation(request)
-                .flatMap(restaurant -> restaurantRepository.findById(restaurant.getRestoId()))
+                .flatMap(restaurant -> restaurantRepository.findByIdAndStatus(restaurant.getRestoId(), true))
                 .map(this::constructResponse)
                 .collectList();
     }
