@@ -10,10 +10,8 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BeenThereCommandRequest {
+public class ApprovePendingRestaurantCommandRequest {
 
     @RestaurantIdMustExists
-    private String restoId;
-
-    private String username;
+    private String restaurantId;
 }

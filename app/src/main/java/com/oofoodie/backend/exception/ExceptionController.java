@@ -10,9 +10,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.server.ServerWebInputException;
 
 @RestControllerAdvice
 public class ExceptionController {
+
+    @ExceptionHandler(ServerWebInputException.class)
+    public ResponseEntity<?> handleException(ServerWebInputException ex){
+        HttpStatus httpStatus = HttpStatus.BAD_REQUEST;
+        log(ex);
+
+        return ResponseEntity.status(httpStatus).body(ResponseHelper.error(httpStatus, ex.getMessage()));
+    }
 
     @ExceptionHandler(DecodingException.class)
     public ResponseEntity<?> handleException(DecodingException ex) {

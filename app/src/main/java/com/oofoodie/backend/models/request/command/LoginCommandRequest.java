@@ -1,6 +1,6 @@
 package com.oofoodie.backend.models.request.command;
 
-import com.oofoodie.backend.validation.RestaurantIdMustExists;
+import com.oofoodie.backend.models.entity.Role;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -10,10 +10,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class BeenThereCommandRequest {
-
-    @RestaurantIdMustExists
-    private String restoId;
+public class LoginCommandRequest {
 
     private String username;
+
+    private String password;
+
+    private Role role;
 }

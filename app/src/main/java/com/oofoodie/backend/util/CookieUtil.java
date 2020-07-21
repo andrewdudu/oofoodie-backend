@@ -7,6 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class CookieUtil {
+
     @Value("${authentication.accessTokenCookieName}")
     private String accessTokenCookieName;
 
@@ -33,6 +34,10 @@ public class CookieUtil {
 
     public HttpCookie deleteAccessTokenCookie() {
         return ResponseCookie.from(accessTokenCookieName, "").maxAge(0).httpOnly(true).path("/").build();
+    }
+
+    public HttpCookie deleteRefreshTokenCookie() {
+        return ResponseCookie.from(refreshTokenCookieName, "").maxAge(0).httpOnly(true).path("/").build();
     }
 
 }
