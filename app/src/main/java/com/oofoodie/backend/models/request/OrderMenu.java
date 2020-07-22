@@ -1,10 +1,9 @@
-package com.oofoodie.backend.models.entity;
+package com.oofoodie.backend.models.request;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.math.BigDecimal;
 
@@ -12,11 +11,11 @@ import java.math.BigDecimal;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Menu {
+public class OrderMenu {
 
-    @Field(name = "name")
     private String name;
 
-    @Field(name = "price")
     private BigDecimal price;
+
+    private Integer qty;
 }

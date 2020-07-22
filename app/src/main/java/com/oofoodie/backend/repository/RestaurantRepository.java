@@ -12,4 +12,8 @@ public interface RestaurantRepository extends ReactiveMongoRepository<Restaurant
     Mono<Restaurant> findByIdAndStatus(String id, boolean status);
 
     Flux<Restaurant> findAllByStatus(Boolean status);
+
+    Flux<Restaurant> findAllByMerchantUsernameOrMerchantUsername(String merchantUsername, String merchantUsername2);
+
+    Mono<Restaurant> findByMerchantUsername(String merchantUsername);
 }

@@ -41,6 +41,9 @@ public class User extends BaseEntity {
     @Field(value = "credits")
     private Integer credits;
 
+    @Field(value = "restaurant_owner")
+    private String restaurantOwner;
+
     @Field(value = "timelines")
     private List<Timeline> timelines;
 
@@ -49,4 +52,5 @@ public class User extends BaseEntity {
 
     @Field(value = "reviews")
     private List<Review> reviews;
+
 }

@@ -4,6 +4,7 @@ import com.oofoodie.backend.models.entity.Role;
 import lombok.Data;
 
 import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import java.util.List;
 
@@ -19,6 +20,10 @@ public class SignupRequest {
 
     @NotNull
     private String password;
+
+    @NotNull
+    @NotBlank
+    private String name;
 
     private List<Role> roles;
 }

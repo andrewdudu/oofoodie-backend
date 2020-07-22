@@ -3,21 +3,14 @@ package com.oofoodie.backend.controller;
 import com.blibli.oss.command.CommandExecutor;
 import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
-import com.oofoodie.backend.command.AddPopularRestaurantCommand;
-import com.oofoodie.backend.command.GetPopularRestaurantCommand;
-import com.oofoodie.backend.command.SearchRestaurantCommand;
+import com.oofoodie.backend.command.*;
 import com.oofoodie.backend.command.impl.*;
 import com.oofoodie.backend.models.request.LikeRequest;
 import com.oofoodie.backend.models.request.PopularRestaurantRequest;
 import com.oofoodie.backend.models.request.RestaurantRequest;
 import com.oofoodie.backend.models.request.ReviewRequest;
-import com.oofoodie.backend.models.request.command.ApprovePendingRestaurantCommandRequest;
-import com.oofoodie.backend.models.request.command.BeenThereCommandRequest;
-import com.oofoodie.backend.models.request.command.NearbyRestaurantCommandRequest;
-import com.oofoodie.backend.models.response.LikeResponse;
-import com.oofoodie.backend.models.response.PopularRestaurantResponse;
-import com.oofoodie.backend.models.response.RestaurantResponse;
-import com.oofoodie.backend.models.response.ReviewResponse;
+import com.oofoodie.backend.models.request.command.*;
+import com.oofoodie.backend.models.response.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -32,9 +25,9 @@ public class RestaurantController {
     @Autowired
     private CommandExecutor commandExecutor;
 
-    @PostMapping("/api/restaurant")
-    public Mono<Response<RestaurantResponse>> suggestRestaurant(@RequestBody RestaurantRequest request) {
-        return commandExecutor.execute(AddRestaurantCommandImpl.class, request)
+    @PostMapping("/api/user/restaurant")
+    public Mono<Response<RestaurantResponse>> suggestRestaurant(@RequestBody RestaurantRequest request, Authentication authentication) {
+        return commandExecutor.execute(AddRestaurantCommandImpl.class, constructAddRestaurantCommandRequest(request, authentication))
                 .map(response -> ResponseHelper.ok(response))
                 .subscribeOn(Schedulers.elastic());
     }
@@ -127,9 +120,64 @@ public class RestaurantController {
 
     }
 
+    @PostMapping("/api/admin/restaurant/{requestId}/request")
+    public Mono<Response<Boolean>> approveRequestRestaurantOwner(@PathVariable String requestId) {
+        return commandExecutor.execute(ApproveRequestRestaurantOwnerCommand.class, constructApproveRequestRestaurantOwnerCommandRequest(requestId))
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @GetMapping("/api/merchant/restaurant/available")
+    public Mono<Response<List<RestaurantResponse>>> getAvailableRestaurant(Authentication authentication) {
+        return commandExecutor.execute(GetAvailableRestaurantCommand.class,
+                constructGetAvailableRestaurantCommandRequest(authentication))
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    @PostMapping("/api/merchant/restaurant/{restaurantId}/request")
+    public Mono<Response<RestaurantResponse>> requestRestaurant(@PathVariable String restaurantId, Authentication authentication) {
+        return commandExecutor.execute(RequestRestaurantOwnerCommand.class, constructRequestRestaurantOwnerCommandRequest(restaurantId, authentication))
+                .map(ResponseHelper::ok)
+                .subscribeOn(Schedulers.elastic());
+    }
+
+    private ApproveRequestRestaurantOwnerCommandRequest constructApproveRequestRestaurantOwnerCommandRequest(String requestId) {
+        return ApproveRequestRestaurantOwnerCommandRequest.builder()
+                .requestId(requestId)
+                .build();
+    }
+
+    private RequestRestaurantOwnerCommandRequest constructRequestRestaurantOwnerCommandRequest(String restaurantId, Authentication authentication) {
+        return RequestRestaurantOwnerCommandRequest.builder()
+                .merchantUsername(authentication.getName())
+                .restaurantId(restaurantId)
+                .build();
+    }
+
+    private GetAvailableRestaurantCommandRequest constructGetAvailableRestaurantCommandRequest(Authentication authentication) {
+        return GetAvailableRestaurantCommandRequest.builder()
+                .merchantUsername(authentication.getName())
+                .build();
+    }
+
     private ApprovePendingRestaurantCommandRequest constructApprovePendingRestaurantCommandRequest(String restaurantId) {
         return ApprovePendingRestaurantCommandRequest.builder()
                 .restaurantId(restaurantId)
+                .build();
+    }
+
+    private AddRestaurantCommandRequest constructAddRestaurantCommandRequest(RestaurantRequest restaurantRequest, Authentication authentication) {
+        return AddRestaurantCommandRequest.builder()
+                .name(restaurantRequest.getName())
+                .telephone(restaurantRequest.getTelephone())
+                .location(restaurantRequest.getLocation())
+                .address(restaurantRequest.getAddress())
+                .type(restaurantRequest.getType())
+                .cuisine(restaurantRequest.getCuisine())
+                .image(restaurantRequest.getImage())
+                .openHour(restaurantRequest.getOpenHour())
+                .suggestUser(authentication.getName())
                 .build();
     }
 

@@ -5,7 +5,7 @@ import com.oofoodie.backend.BaseTest;
 import com.oofoodie.backend.command.impl.AddImageCommandImpl;
 import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
 import com.oofoodie.backend.models.entity.Restaurant;
-import com.oofoodie.backend.models.request.RestaurantRequest;
+import com.oofoodie.backend.models.request.command.AddRestaurantCommandRequest;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import com.oofoodie.backend.repository.RestaurantLocationRepository;
 import com.oofoodie.backend.repository.RestaurantRepository;
@@ -51,8 +51,8 @@ public class AddRestaurantCommandImplTest extends BaseTest {
         when(commandExecutor.execute(AddImageCommandImpl.class, "success")).thenReturn(Mono.just("success"));
     }
 
-    private RestaurantRequest constructRestaurantRequest() {
-        return RestaurantRequest.builder()
+    private AddRestaurantCommandRequest constructAddRestaurantCommandRequest() {
+        return AddRestaurantCommandRequest.builder()
                 .location(constructLocation())
                 .image("success")
                 .openHour(constructOpenHourRequest())
@@ -71,7 +71,7 @@ public class AddRestaurantCommandImplTest extends BaseTest {
     @Test
     public void executeTest() {;
         mockRepository();
-        StepVerifier.create(command.execute(constructRestaurantRequest()))
+        StepVerifier.create(command.execute(constructAddRestaurantCommandRequest()))
                 .expectNext(constructRestaurantResponse(constructRestaurant()))
                 .verifyComplete();
         verify(restaurantLocationRepository).save(anyObject());

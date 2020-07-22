@@ -49,4 +49,6 @@ public class RestaurantResponse {
     private List<String> likes;
 
     private String status;
+
+    private String merchantUsername;
 }
