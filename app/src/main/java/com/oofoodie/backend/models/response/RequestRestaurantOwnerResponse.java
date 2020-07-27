@@ -13,6 +13,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class RequestRestaurantOwnerResponse {
 
+    private String id;
+
     private User merchant;
 
     private Restaurant restaurant;

@@ -1,6 +1,7 @@
 package com.oofoodie.backend.command;
 
 import com.oofoodie.backend.command.impl.ApproveRequestRestaurantOwnerCommandImpl;
+import com.oofoodie.backend.helper.GetRedisData;
 import com.oofoodie.backend.models.entity.RestaurantOwnerRequest;
 import com.oofoodie.backend.models.entity.User;
 import com.oofoodie.backend.models.request.command.ApproveRequestRestaurantOwnerCommandRequest;
@@ -29,6 +30,9 @@ public class ApproveRequestRestaurantOwnerCommandImplTest {
     @Mock
     private UserRepository userRepository;
 
+    @Mock
+    private GetRedisData getRedisData;
+
     @After
     public void after() {
         verifyNoMoreInteractions(userRepository, restaurantOwnerRequestRepository);
@@ -44,6 +48,7 @@ public class ApproveRequestRestaurantOwnerCommandImplTest {
         when(restaurantOwnerRequestRepository.findById("id")).thenReturn(Mono.just(restaurantOwnerRequest));
         when(restaurantOwnerRequestRepository.deleteById("id")).thenReturn(Mono.empty());
         when(userRepository.findByUsername("username")).thenReturn(Mono.just(new User()));
+        doNothing().when(getRedisData).saveUser(new User());
         when(userRepository.save(new User())).thenReturn(Mono.just(new User()));
 
         StepVerifier.create(command.execute(ApproveRequestRestaurantOwnerCommandRequest.builder()
@@ -54,6 +59,7 @@ public class ApproveRequestRestaurantOwnerCommandImplTest {
 
         verify(restaurantOwnerRequestRepository).findById("id");
         verify(restaurantOwnerRequestRepository).deleteById("id");
+        verify(getRedisData).saveUser(new User());
         verify(userRepository).findByUsername("username");
     }
 }

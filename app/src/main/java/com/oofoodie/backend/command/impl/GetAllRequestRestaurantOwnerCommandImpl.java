@@ -37,7 +37,7 @@ public class GetAllRequestRestaurantOwnerCommandImpl implements GetAllRequestRes
         return Mono.zip(
                 getRestaurant(restaurantOwnerRequest.getRestaurantId()),
                 getMerchant(restaurantOwnerRequest.getMerchantUsername()))
-                .flatMap(data -> Mono.fromCallable(() -> constructResponse(data.getT1(), data.getT2())));
+                .flatMap(data -> Mono.fromCallable(() -> constructResponse(data.getT1(), data.getT2(), restaurantOwnerRequest.getId())));
     }
 
     private Mono<Restaurant> getRestaurant(String restaurantId) {
@@ -48,8 +48,9 @@ public class GetAllRequestRestaurantOwnerCommandImpl implements GetAllRequestRes
         return userRepository.findByUsername(username);
     }
 
-    private RequestRestaurantOwnerResponse constructResponse(Restaurant restaurant, User merchant) {
+    private RequestRestaurantOwnerResponse constructResponse(Restaurant restaurant, User merchant, String id) {
         return RequestRestaurantOwnerResponse.builder()
+                .id(id)
                 .merchant(merchant)
                 .restaurant(restaurant)
                 .build();

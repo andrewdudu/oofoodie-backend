@@ -12,7 +12,6 @@ import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 @Service
 public class LikeTimelineCommandImpl implements LikeTimelineCommand {
@@ -36,9 +35,6 @@ public class LikeTimelineCommandImpl implements LikeTimelineCommand {
 
     private Mono<User> addLike(User user, LikeTimelineCommandRequest request) {
         List<Timeline> timelines = user.getTimelines();
-        if (Objects.isNull(timelines)) {
-            timelines = new ArrayList<>();
-        }
         Timeline notEdited = Timeline.builder()
                 .likes(new ArrayList<>())
                 .build();
@@ -62,7 +58,7 @@ public class LikeTimelineCommandImpl implements LikeTimelineCommand {
         }
 
         timeline.setLikes(likes);
-        if (timelines.size() != 0) timelines.remove(notEdited);
+        timelines.remove(notEdited);
         timelines.add(timeline);
         user.setTimelines(timelines);
 

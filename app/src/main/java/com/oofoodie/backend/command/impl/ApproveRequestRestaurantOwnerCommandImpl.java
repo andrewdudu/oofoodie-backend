@@ -1,6 +1,7 @@
 package com.oofoodie.backend.command.impl;
 
 import com.oofoodie.backend.command.ApproveRequestRestaurantOwnerCommand;
+import com.oofoodie.backend.helper.GetRedisData;
 import com.oofoodie.backend.models.entity.RestaurantOwnerRequest;
 import com.oofoodie.backend.models.entity.User;
 import com.oofoodie.backend.models.request.command.ApproveRequestRestaurantOwnerCommandRequest;
@@ -19,6 +20,9 @@ public class ApproveRequestRestaurantOwnerCommandImpl implements ApproveRequestR
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private GetRedisData getRedisData;
+
     @Override
     public Mono<Boolean> execute(ApproveRequestRestaurantOwnerCommandRequest request) {
         return restaurantOwnerRequestRepository.findById(request.getRequestId())
@@ -35,7 +39,8 @@ public class ApproveRequestRestaurantOwnerCommandImpl implements ApproveRequestR
     private Mono<User> setRestaurantOwner(User user, String restaurantId) {
         user.setRestaurantOwner(restaurantId);
 
-        return userRepository.save(user);
+        return userRepository.save(user)
+                .doOnNext(savedUser -> getRedisData.saveUser(user));
     }
 
     private void deleteRestaurantOwnerRequest(String requestId) {

@@ -28,7 +28,7 @@ public class TokenProvider implements Serializable {
     @Value("3600000")
     private Long FORGOT_PASSWORD_TOKEN;
 
-    @Value("${authentication.tokenSecret")
+    @Value("${authentication.tokenSecret}")
     private String TOKEN_SECRET;
 
     public String getUsernameFromToken(String token) {
