@@ -9,4 +9,6 @@ import reactor.core.publisher.Flux;
 public interface OrderRepository extends ReactiveMongoRepository<Orders, String> {
 
     Flux<Orders> findAllByUsername(String username);
+
+    Flux<Orders> findAllByRestaurantIdAndStatus(String restaurantId, String status);
 }

@@ -1,10 +1,10 @@
 package com.oofoodie.backend.command.impl;
 
 import com.oofoodie.backend.command.LoginCommand;
+import com.oofoodie.backend.exception.BadRequestException;
 import com.oofoodie.backend.handler.TokenProvider;
 import com.oofoodie.backend.helper.GetRedisData;
 import com.oofoodie.backend.models.request.command.LoginCommandRequest;
-import com.oofoodie.backend.models.response.ApiResponse;
 import com.oofoodie.backend.models.response.LoginResponse;
 import com.oofoodie.backend.repository.UserRepository;
 import com.oofoodie.backend.util.CookieUtil;
@@ -48,25 +48,21 @@ public class LoginCommandImpl implements LoginCommand {
 
     private Mono<ResponseEntity<?>> login(Boolean isUserExist, LoginCommandRequest request) {
         if (!isUserExist)
-            return Mono.fromCallable(() -> badRequest());
+            return Mono.error(new BadRequestException("User does not exist"));
         else {
             return getRedisData.getUser(request.getUsername())
-                .map(user -> {
+                .flatMap(user -> {
                     if (passwordEncoder.matches(request.getPassword(), user.getPassword()) && user.getRoles().contains(request.getRole())) {
                         String accessToken = tokenProvider.generateToken(user);
                         String refreshToken = tokenProvider.generateRefreshToken(request.getUsername());
-                        return ResponseEntity.ok()
+                        return Mono.just(ResponseEntity.ok()
                                 .header(HttpHeaders.SET_COOKIE, cookieUtil.createAccessTokenCookie(accessToken, ACCESS_TOKEN_EXPIRATION_IN_MS).toString())
                                 .header(HttpHeaders.SET_COOKIE, cookieUtil.createRefreshTokenCookie(refreshToken, REFRESH_TOKEN_EXPIRATION_IN_MS).toString())
-                                .body(new LoginResponse("Login Successfully", user));
+                                .body(new LoginResponse("Login Successfully", user)));
                     } else {
-                        return ResponseEntity.badRequest().body(new ApiResponse(400, "Invalid credentials", null));
+                        return Mono.error(new BadRequestException("Invalid credentials"));
                     }
                 });
         }
-    }
-
-    private ResponseEntity badRequest() {
-        return ResponseEntity.badRequest().body(new ApiResponse(400, "User does not exist", null));
     }
 }

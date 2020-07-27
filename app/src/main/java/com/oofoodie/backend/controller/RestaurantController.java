@@ -5,12 +5,12 @@ import com.blibli.oss.common.response.Response;
 import com.blibli.oss.common.response.ResponseHelper;
 import com.oofoodie.backend.command.*;
 import com.oofoodie.backend.command.impl.*;
-import com.oofoodie.backend.models.request.LikeRequest;
-import com.oofoodie.backend.models.request.PopularRestaurantRequest;
-import com.oofoodie.backend.models.request.RestaurantRequest;
-import com.oofoodie.backend.models.request.ReviewRequest;
+import com.oofoodie.backend.models.request.*;
 import com.oofoodie.backend.models.request.command.*;
-import com.oofoodie.backend.models.response.*;
+import com.oofoodie.backend.models.response.LikeResponse;
+import com.oofoodie.backend.models.response.PopularRestaurantResponse;
+import com.oofoodie.backend.models.response.RestaurantResponse;
+import com.oofoodie.backend.models.response.ReviewResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -91,7 +91,7 @@ public class RestaurantController {
                 .subscribeOn(Schedulers.elastic());
     }
 
-    @PostMapping("/api/restaurant/popular")
+    @PostMapping("/api/merchant/restaurant/popular")
     public Mono<Response<PopularRestaurantResponse>> addPopularRestaurant(@RequestBody PopularRestaurantRequest request) {
         return commandExecutor.execute(AddPopularRestaurantCommand.class, request)
                 .map(ResponseHelper::ok)
@@ -117,7 +117,6 @@ public class RestaurantController {
         return commandExecutor.execute(ApprovePendingRestaurantCommandImpl.class, constructApprovePendingRestaurantCommandRequest(restaurantId))
                 .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
-
     }
 
     @PostMapping("/api/admin/restaurant/{requestId}/request")
@@ -180,22 +179,4 @@ public class RestaurantController {
                 .suggestUser(authentication.getName())
                 .build();
     }
-
-//    @PostMapping("/auth/elastic")
-//    public Mono<RestaurantLocation> test(@RequestBody RestaurantLocationRequest location) {
-//        RestaurantLocation restoLocation = new RestaurantLocation();
-//        restoLocation.setRestoId(location.getRestoId());
-//        GeoPoint geoPoint = new GeoPoint(location.getLat(), location.getLng());
-//        restoLocation.setLocation(geoPoint);
-//        return Mono.just(restaurantLocationRepository.save(restoLocation));
-//    }
-//
-//    @GetMapping("/auth/search")
-//    public Flux<RestaurantLocation> search() {
-//        QueryBuilder query = QueryBuilders
-//                .geoDistanceQuery("location")
-//                .point(37.7510, -97.8220)
-//                .distance(10, DistanceUnit.MILES);
-//        return Flux.fromIterable(restaurantLocationRepository.search(query));
-//    }
 }

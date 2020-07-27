@@ -16,6 +16,22 @@
 
 	<properties>
 		<java.version>1.8</java.version>
+		<sonar.exclusions>
+			**/config/**,
+			**/constants/**,
+			**/exception/**,
+			**/handler/**,
+			**/helper/**,
+			**/models/**,
+			**/repository/**,
+			**/security/**,
+			**/service/**,
+			**/storage/**,
+			**/service/**,
+			**/util/**,
+			**/validation/**,
+			**/BackendApplication.java
+		</sonar.exclusions>
 	</properties>
 
 	<dependencies>

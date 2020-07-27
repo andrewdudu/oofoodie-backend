@@ -3,6 +3,7 @@ package com.oofoodie.backend.command.impl;
 import com.oofoodie.backend.command.ResetPasswordCommand;
 import com.oofoodie.backend.exception.BadRequestException;
 import com.oofoodie.backend.handler.TokenProvider;
+import com.oofoodie.backend.helper.GetRedisData;
 import com.oofoodie.backend.models.entity.User;
 import com.oofoodie.backend.models.request.ResetPasswordRequest;
 import com.oofoodie.backend.repository.UserRepository;
@@ -12,22 +13,23 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 
-import java.util.concurrent.TimeUnit;
-
 @Service
 public class ResetPasswordCommandImpl implements ResetPasswordCommand {
 
     @Autowired
-    TokenProvider tokenProvider;
+    private TokenProvider tokenProvider;
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Autowired
-    RedisTemplate<Object, Object> redisTemplate;
+    private RedisTemplate<Object, Object> redisTemplate;
 
     @Autowired
-    PasswordEncoder passwordEncoder;
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private GetRedisData getRedisData;
 
     @Override
     public Mono<String> execute(ResetPasswordRequest request) {
@@ -36,8 +38,8 @@ public class ResetPasswordCommandImpl implements ResetPasswordCommand {
                 .flatMap(email -> userRepository.findByEmail(email))
                 .doOnNext(user -> changePassword(user, request.getPassword()))
                 .doOnNext(user -> userRepository.save(user))
-                .doOnNext(user -> redisTemplate.opsForValue().set("user-" + user.getUsername(), user, 30, TimeUnit.MINUTES))
-                .doOnNext(user -> redisTemplate.delete("reset-password-" + user.getEmail()))
+                .doOnNext(user -> getRedisData.saveUser(user))
+                .doOnNext(user -> getRedisData.deleteResetToken(user.getEmail()))
                 .map(user -> "OK")
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BadRequestException("Token is invalid"))));
     }

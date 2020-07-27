@@ -4,6 +4,7 @@ import com.blibli.oss.command.CommandExecutor;
 import com.oofoodie.backend.command.ForgotPasswordCommand;
 import com.oofoodie.backend.exception.BadRequestException;
 import com.oofoodie.backend.handler.TokenProvider;
+import com.oofoodie.backend.helper.GetRedisData;
 import com.oofoodie.backend.models.entity.User;
 import com.oofoodie.backend.models.request.ForgotPasswordRequest;
 import com.oofoodie.backend.models.request.MailRequest;
@@ -14,8 +15,6 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
 import reactor.core.scheduler.Schedulers;
-
-import java.util.concurrent.TimeUnit;
 
 @Service
 public class ForgotPasswordCommandImpl implements ForgotPasswordCommand {
@@ -31,6 +30,9 @@ public class ForgotPasswordCommandImpl implements ForgotPasswordCommand {
 
     @Autowired
     private TokenProvider tokenProvider;
+
+    @Autowired
+    private GetRedisData getRedisData;
 
     @Override
     public Mono<ForgotPasswordResponse> execute(ForgotPasswordRequest request) {
@@ -63,11 +65,11 @@ public class ForgotPasswordCommandImpl implements ForgotPasswordCommand {
         String key = "reset-password-" + user.getEmail();
         if (!redisTemplate.hasKey(key)) {
             String token = tokenProvider.generatePasswordResetToken(user.getEmail());
-            redisTemplate.opsForValue().set(key, token, 1, TimeUnit.HOURS);
+            getRedisData.setResetPasswordToken(key, token);
 
             return token;
         }
 
-        return redisTemplate.opsForValue().get(key).toString();
+        return getRedisData.get(key);
     }
 }

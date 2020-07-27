@@ -14,6 +14,8 @@ import java.util.List;
 @AllArgsConstructor
 public class OrdersResponse {
 
+    private String id;
+
     private String time;
 
     private List<OrderMenu> orderMenu;
@@ -21,4 +23,6 @@ public class OrdersResponse {
     private RestaurantResponse restaurantResponse;
 
     private String status;
+
+    private String username;
 }

@@ -34,7 +34,7 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
     @Override
     public Mono<RestaurantResponse> execute(AddRestaurantCommandRequest request) {
         String id = UUID.randomUUID().toString();
-        return Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
+        return saveElasticLocation(request.getLocation(), id)
                 .flatMap(restaurantLocation -> storeImg(request.getImage()))
                 .map(img -> structureRequest(request, id, img))
                 .flatMap(restaurant -> restaurantRepository.save(restaurant))

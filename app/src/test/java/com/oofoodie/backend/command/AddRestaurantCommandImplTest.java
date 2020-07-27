@@ -4,6 +4,7 @@ import com.blibli.oss.command.CommandExecutor;
 import com.oofoodie.backend.BaseTest;
 import com.oofoodie.backend.command.impl.AddImageCommandImpl;
 import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
+import com.oofoodie.backend.models.entity.Location;
 import com.oofoodie.backend.models.entity.Restaurant;
 import com.oofoodie.backend.models.request.command.AddRestaurantCommandRequest;
 import com.oofoodie.backend.models.response.RestaurantResponse;
@@ -16,6 +17,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.BeanUtils;
+import org.springframework.data.elasticsearch.ElasticsearchException;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
@@ -76,5 +78,47 @@ public class AddRestaurantCommandImplTest extends BaseTest {
                 .verifyComplete();
         verify(restaurantLocationRepository).save(anyObject());
         verify(restaurantRepository).save(constructRestaurant());
+    }
+
+    @Test
+    public void executeTestNoLat() {;
+        StepVerifier.create(command.execute(
+                AddRestaurantCommandRequest.builder()
+                    .location(Location.builder()
+                            .lon((float) 3.0)
+                            .lat(null)
+                            .build())
+                    .image("success")
+                    .openHour(constructOpenHourRequest())
+                    .build()))
+                .expectError(ElasticsearchException.class)
+                .verify();
+    }
+
+    @Test
+    public void executeTestNoLon() {;
+        StepVerifier.create(command.execute(
+                AddRestaurantCommandRequest.builder()
+                        .location(Location.builder()
+                                .lat((float) 3.0)
+                                .lon(null)
+                                .build())
+                        .image("success")
+                        .openHour(constructOpenHourRequest())
+                        .build()))
+                .expectError(ElasticsearchException.class)
+                .verify();
+    }
+
+    @Test
+    public void executeTestNoLocation() {;
+        StepVerifier.create(command.execute(
+                AddRestaurantCommandRequest.builder()
+                        .location(null)
+                        .image("success")
+                        .openHour(constructOpenHourRequest())
+                        .build()))
+                .expectError(ElasticsearchException.class)
+                .verify();
     }
 }

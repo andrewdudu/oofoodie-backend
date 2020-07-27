@@ -9,6 +9,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Document(collection = "users")
@@ -39,7 +40,7 @@ public class User extends BaseEntity {
     private List<String> likes;
 
     @Field(value = "credits")
-    private Integer credits;
+    private BigDecimal credits;
 
     @Field(value = "restaurant_owner")
     private String restaurantOwner;

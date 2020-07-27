@@ -34,4 +34,16 @@ public class GetRedisData {
         return userRepository.findByUsername(username)
                 .doOnNext(user -> redisTemplate.opsForValue().set(key, user, 30, TimeUnit.MINUTES));
     }
+
+    public String get(String key) {
+        return redisTemplate.opsForValue().get(key).toString();
+    }
+
+    public void setResetPasswordToken(String key, String token) {
+        redisTemplate.opsForValue().set(key, token, 1, TimeUnit.HOURS);
+    }
+
+    public void deleteResetToken(String email) {
+        redisTemplate.delete("reset-password-" + email);
+    }
 }
