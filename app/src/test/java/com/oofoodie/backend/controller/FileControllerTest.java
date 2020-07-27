@@ -1,5 +1,6 @@
 package com.oofoodie.backend.controller;
 
+import com.oofoodie.backend.ControllerTest;
 import com.oofoodie.backend.command.impl.GetImageCommandImpl;
 import org.junit.Test;
 import org.junit.runner.RunWith;

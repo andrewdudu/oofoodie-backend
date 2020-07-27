@@ -1,4 +1,4 @@
-package com.oofoodie.backend.controller;
+package com.oofoodie.backend;
 
 import com.blibli.oss.command.CommandExecutor;
 import com.fasterxml.jackson.core.JsonProcessingException;

@@ -1,6 +1,7 @@
 package com.oofoodie.backend.controller;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
+import com.oofoodie.backend.ControllerTest;
 import com.oofoodie.backend.command.impl.AddRestaurantCommandImpl;
 import com.oofoodie.backend.models.entity.Location;
 import com.oofoodie.backend.models.request.Hour;
@@ -61,7 +62,5 @@ public class RestaurantControllerTest extends ControllerTest {
                 .statusCode(HttpStatus.OK.value());
 
         verify(commandExecutor).execute(eq(AddRestaurantCommandImpl.class), addRestaurantCommandRequestArgumentCaptor.capture());
-
-//        assertEquals(addRestaurantCommandRequestArgumentCaptor.getValue(), )
     }
 }
