@@ -4,11 +4,10 @@ pipeline {
     }
     stages {
         stage('Build') {
-            dir("app") {
-                sh "pwd"
-            }
             steps {
-                sh 'mvn clean package -Dmaven.test.skip=true'
+                dir("app") {
+                    sh 'mvn clean package -Dmaven.test.skip=true'
+                }
             }
         }
         stage('Test') {
