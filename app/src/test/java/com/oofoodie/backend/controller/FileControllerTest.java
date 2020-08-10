@@ -1,22 +1,37 @@
 package com.oofoodie.backend.controller;
 
-import com.oofoodie.backend.ControllerTest;
+import com.blibli.oss.command.CommandExecutor;
 import com.oofoodie.backend.command.impl.GetImageCommandImpl;
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import io.restassured.RestAssured;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.http.HttpStatus;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.ResponseEntity;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Mono;
 
-import static io.restassured.RestAssured.given;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-@RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class FileControllerTest extends ControllerTest {
+public class FileControllerTest {
+
+    @MockBean
+    private CommandExecutor commandExecutor;
+
+    @Autowired
+    private WebTestClient webTestClient;
+
+    @Value("${local.server.port}")
+    protected int port;
+
+    @BeforeEach
+    public void setUp() {
+        RestAssured.port = port;
+    }
 
     @Test
     public void getImage() {
@@ -24,11 +39,12 @@ public class FileControllerTest extends ControllerTest {
         when(commandExecutor.execute(GetImageCommandImpl.class, "file.png"))
                 .thenReturn(Mono.just(ResponseEntity.ok(bytes)));
 
-        given()
-                .when()
-                .get("/api/img/file.png")
-                .then()
-                .statusCode(HttpStatus.OK.value());
+        webTestClient.get()
+                .uri(uriBuilder ->
+                        uriBuilder.path("/api/img/file.png").build())
+                .exchange()
+                .expectStatus()
+                .isOk();
 
         verify(commandExecutor).execute(GetImageCommandImpl.class, "file.png");
     }

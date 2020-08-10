@@ -11,7 +11,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.restassured.RestAssured;
 import io.restassured.specification.RequestSpecification;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.mock.mockito.MockBean;
@@ -40,12 +40,12 @@ public class ControllerTest {
     @Value("${local.server.port}")
     protected int port;
 
-    private String accessToken,
+    protected String accessToken,
             refreshToken,
             accessTokenEncrypted,
             refreshTokenEncrypted;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         RestAssured.port = port;
 

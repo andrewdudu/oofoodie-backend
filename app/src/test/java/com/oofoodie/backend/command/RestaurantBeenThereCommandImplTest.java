@@ -57,11 +57,11 @@ public class RestaurantBeenThereCommandImplTest {
     @Test
     public void executeTestAlreadyBeenThere() {
         Restaurant restaurant = Restaurant.builder()
-                .beenThere(Collections.singletonList("username"))
+                .beenThere(new ArrayList<>())
                 .build();
 
         when(restaurantRepository.findByIdAndStatus("id", true))
-                .thenReturn(Mono.just(Restaurant.builder().beenThere(Collections.singletonList("username")).build()));
+                .thenReturn(Mono.just(Restaurant.builder().beenThere(new ArrayList<>(Collections.singletonList("username"))).build()));
         when(restaurantRepository.save(restaurant)).thenReturn(Mono.just(restaurant));
 
         StepVerifier.create(command.execute(BeenThereCommandRequest.builder()

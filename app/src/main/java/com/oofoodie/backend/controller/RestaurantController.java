@@ -28,14 +28,14 @@ public class RestaurantController {
     @PostMapping("/api/user/restaurant")
     public Mono<Response<RestaurantResponse>> suggestRestaurant(@RequestBody RestaurantRequest request, Authentication authentication) {
         return commandExecutor.execute(AddRestaurantCommandImpl.class, constructAddRestaurantCommandRequest(request, authentication))
-                .map(response -> ResponseHelper.ok(response))
+                .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
     }
 
     @GetMapping("/api/restaurant/{id}")
     public Mono<Response<RestaurantResponse>> getById(@PathVariable String id) {
         return commandExecutor.execute(GetRestaurantByIdCommandImpl.class, id)
-                .map(response -> ResponseHelper.ok(response))
+                .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
     }
 
@@ -44,7 +44,7 @@ public class RestaurantController {
         request.setRestoId(id);
         request.setUser(authentication.getName());
         return commandExecutor.execute(AddReviewCommandImpl.class, request)
-                .map(response -> ResponseHelper.ok(response))
+                .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
     }
 
@@ -139,6 +139,12 @@ public class RestaurantController {
         return commandExecutor.execute(RequestRestaurantOwnerCommand.class, constructRequestRestaurantOwnerCommandRequest(restaurantId, authentication))
                 .map(ResponseHelper::ok)
                 .subscribeOn(Schedulers.elastic());
+    }
+
+    @DeleteMapping("/api/admin/restaurant/{restaurantId}")
+    public Mono<Response<Boolean>> declineRestaurant(@PathVariable String restaurantId) {
+        return commandExecutor.execute(DeclinePendingRestaurantRequest.class, restaurantId)
+                .map(ResponseHelper::ok);
     }
 
     private ApproveRequestRestaurantOwnerCommandRequest constructApproveRequestRestaurantOwnerCommandRequest(String requestId) {
