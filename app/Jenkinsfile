@@ -10,18 +10,6 @@ pipeline {
                 }
             }
         }
-        stage('Test') {
-            steps {
-                dir("app") {
-                    sh 'mvn test'
-                }
-            }
-            post {
-                always {
-                    junit 'app/target/surefire-reports/*.xml'
-                }
-            }
-        }
         stage('Build image') {
             steps {
                 dir("app") {
