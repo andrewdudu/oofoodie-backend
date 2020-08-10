@@ -10,14 +10,30 @@ pipeline {
                 }
             }
         }
+        stage('Test') {
+            steps {
+                dir("app") {
+                    sh 'mvn test'
+                }
+            }
+            post {
+                always {
+                    junit 'app/target/surefire-reports/*.xml'
+                }
+            }
+        }
         stage('Build image') {
             steps {
-                sh 'docker build -t my-app .'
+                dir("app") {
+                    sh 'docker build -t my-app .'
+                }
             }
         }
         stage('Run app') {
             steps {
-                sh 'docker run my-app'
+                dir("app") {
+                    sh 'docker run my-app'
+                }
             }
         }
     }
