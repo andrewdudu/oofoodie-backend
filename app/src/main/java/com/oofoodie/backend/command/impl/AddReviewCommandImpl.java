@@ -42,10 +42,9 @@ public class AddReviewCommandImpl implements AddReviewCommand {
 
     @Override
     public Mono<ReviewResponse> execute(ReviewRequest request) {
-        // TODO: change status to TRUE when admin's feature is created
-        return restaurantRepository.findById(request.getRestoId())
+        return restaurantRepository.findByIdAndStatus(request.getRestoId(), true)
                 .flatMap(restaurant -> addReview(request, restaurant))
-                .map(review -> constructResponse(review))
+                .map(this::constructResponse)
                 .switchIfEmpty(Mono.defer(() -> Mono.error(new BadRequestException("Restaurant is not found"))));
     }
 
@@ -77,15 +76,16 @@ public class AddReviewCommandImpl implements AddReviewCommand {
 
         return restaurantRepository.save(restaurant)
                 .flatMap(res -> getRedisData.getUser(review.getUser()))
-                .flatMap(user -> addTimeline(user, review))
+                .flatMap(user -> addTimeline(user, review, restaurant.getName()))
                 .flatMap(res -> reviewRepository.save(review));
     }
 
-    private Mono<User> addTimeline(User user, Review review) {
+    private Mono<User> addTimeline(User user, Review review, String restaurantName) {
         Boolean hasReviewed = false;
         Timeline timeline = Timeline.builder()
-                .likes(0)
+                .likes(new ArrayList<>())
                 .type("review")
+                .restaurantName(restaurantName)
                 .username(review.getUser())
                 .reviewId(review.getId())
                 .build();
@@ -109,7 +109,10 @@ public class AddReviewCommandImpl implements AddReviewCommand {
             }
         }
 
-        if (!hasReviewed) timelines.add(timeline);
+        if (!hasReviewed) {
+            timeline.setNumber(timelines.size());
+            timelines.add(timeline);
+        }
         user.setTimelines(timelines);
 
         return timelineRepository.save(timeline)

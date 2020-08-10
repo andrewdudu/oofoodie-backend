@@ -7,9 +7,13 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 @Repository
-public interface RestaurantRepository extends ReactiveMongoRepository<Restaurant, String> {
+public interface RestaurantRepository extends ReactiveMongoRepository<Restaurant, String>, RestaurantCustomRepository {
 
     Mono<Restaurant> findByIdAndStatus(String id, boolean status);
 
     Flux<Restaurant> findAllByStatus(Boolean status);
+
+    Flux<Restaurant> findAllByMerchantUsernameOrMerchantUsername(String merchantUsername, String merchantUsername2);
+
+    Mono<Restaurant> findByMerchantUsername(String merchantUsername);
 }

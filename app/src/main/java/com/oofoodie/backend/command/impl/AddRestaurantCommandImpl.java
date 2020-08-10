@@ -5,7 +5,7 @@ import com.oofoodie.backend.command.AddRestaurantCommand;
 import com.oofoodie.backend.models.elastic.RestaurantLocation;
 import com.oofoodie.backend.models.entity.Location;
 import com.oofoodie.backend.models.entity.Restaurant;
-import com.oofoodie.backend.models.request.RestaurantRequest;
+import com.oofoodie.backend.models.request.command.AddRestaurantCommandRequest;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import com.oofoodie.backend.repository.RestaurantLocationRepository;
 import com.oofoodie.backend.repository.RestaurantRepository;
@@ -32,9 +32,9 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
     private CommandExecutor commandExecutor;
 
     @Override
-    public Mono<RestaurantResponse> execute(RestaurantRequest request) {
+    public Mono<RestaurantResponse> execute(AddRestaurantCommandRequest request) {
         String id = UUID.randomUUID().toString();
-        return Mono.fromCallable(() -> saveElasticLocation(request.getLocation(), id))
+        return saveElasticLocation(request.getLocation(), id)
                 .flatMap(restaurantLocation -> storeImg(request.getImage()))
                 .map(img -> structureRequest(request, id, img))
                 .flatMap(restaurant -> restaurantRepository.save(restaurant))
@@ -61,7 +61,7 @@ public class AddRestaurantCommandImpl implements AddRestaurantCommand {
         return response;
     }
 
-    private Restaurant structureRequest(RestaurantRequest request, String id, String img) {
+    private Restaurant structureRequest(AddRestaurantCommandRequest request, String id, String img) {
         Restaurant resto = new Restaurant();
         BeanUtils.copyProperties(request, resto);
         resto.setId(id);

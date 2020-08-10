@@ -17,7 +17,7 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Documented
 public @interface PopularRestaurantIsNotDuplicated {
 
-    String message() default "Does not exists";
+    String message() default "you can not promote twice.";
 
     String[] path() default "restoId";
 

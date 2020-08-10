@@ -55,4 +55,10 @@ public class Restaurant extends BaseEntity {
 
     @Field(name = "status")
     private boolean status;
+
+    @Field(name = "suggest_user")
+    private String suggestUser;
+
+    @Field(name = "merchant_username")
+    private String merchantUsername;
 }

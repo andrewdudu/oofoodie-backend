@@ -33,6 +33,8 @@ public class RestaurantBeenThereCommandImpl implements RestaurantBeenThereComman
 
             if (!visits.contains(request.getUsername())) {
                 visits.add(request.getUsername());
+            } else {
+                visits.remove(request.getUsername());
             }
         } else {
             visits = new ArrayList<>();

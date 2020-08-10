@@ -10,7 +10,6 @@ import com.oofoodie.backend.util.CookieUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import reactor.core.publisher.Mono;
@@ -39,15 +38,12 @@ public class RefreshTokenCommandImpl implements RefreshTokenCommand {
     public Mono<ResponseEntity<?>> execute(RefreshRequest request) {
         Boolean refreshTokenValid = tokenProvider.validateToken(request.getRefreshToken());
         if (!refreshTokenValid) {
-            throw new AuthenticationFailException("Refresh Token is invalid!");
+            return Mono.error(new AuthenticationFailException("Refresh Token is invalid!"));
         }
 
         String currentUsername = tokenProvider.getUsernameFromToken(request.getRefreshToken());
         return userRepository.findByUsername(currentUsername)
                 .map(user -> {
-                    if (user == null) {
-                        return new ResponseEntity<>(new AuthenticationFailException("User not found"), HttpStatus.UNAUTHORIZED);
-                    }
                     String newAccessToken = tokenProvider.generateToken(user);
                     return ResponseEntity.ok().contentType(APPLICATION_JSON)
                             .header(HttpHeaders.SET_COOKIE, cookieUtil.createAccessTokenCookie(newAccessToken, ACCESS_TOKEN_EXPIRATION_IN_MS).toString())

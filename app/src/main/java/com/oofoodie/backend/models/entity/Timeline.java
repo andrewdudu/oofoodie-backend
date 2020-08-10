@@ -7,6 +7,8 @@ import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.util.List;
+
 @Document(collection = "timelines")
 @Data
 @Builder
@@ -17,7 +19,10 @@ public class Timeline extends BaseEntity {
     @Field(value = "type")
     private String type;
 
-    @Field(value = "resto_name")
+    @Field(value = "restaurant_name")
+    private String restaurantName;
+
+    @Field(value = "star")
     private Integer star;
 
     @Field(value = "comments")
@@ -27,11 +32,14 @@ public class Timeline extends BaseEntity {
     private String time;
 
     @Field(value = "likes")
-    private Integer likes;
+    private List<String> likes;
 
     @Field(value = "review_id")
     private String reviewId;
 
     @Field(value = "username")
     private String username;
+
+    @Field(value = "number")
+    private Integer number;
 }

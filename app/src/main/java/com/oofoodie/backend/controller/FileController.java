@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import reactor.core.publisher.Mono;
-import reactor.core.scheduler.Schedulers;
 
 import java.io.IOException;
 
@@ -20,7 +19,6 @@ public class FileController {
 
     @GetMapping("/api/img/{fileName}")
     public Mono<ResponseEntity<byte[]>> getImage(@PathVariable String fileName) throws IOException {
-        return commandExecutor.execute(GetImageCommandImpl.class, fileName)
-                .subscribeOn(Schedulers.elastic());
+        return commandExecutor.execute(GetImageCommandImpl.class, fileName);
     }
 }

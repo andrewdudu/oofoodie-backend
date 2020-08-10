@@ -26,4 +26,16 @@ public class MailService {
 
         return true;
     }
+
+    public Boolean sendEmail(String email, String message) {
+        SimpleMailMessage msg = new SimpleMailMessage();
+
+        msg.setTo(email);
+        msg.setSubject("ooFoodie Split Bill");
+        msg.setText(message);
+
+        javaMailSender.send(msg);
+
+        return true;
+    }
 }

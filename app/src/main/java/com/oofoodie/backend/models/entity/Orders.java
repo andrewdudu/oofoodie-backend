@@ -1,11 +1,14 @@
 package com.oofoodie.backend.models.entity;
 
+import com.oofoodie.backend.models.request.OrderMenu;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.List;
 
 @Document(collection = "orders")
 @Data
@@ -18,14 +21,14 @@ public class Orders extends BaseEntity {
     private String time;
 
     @Field(name = "menu")
-    private Menu menu;
+    private List<OrderMenu> menu;
 
-    @Field(name = "user_email")
-    private String userEmail;
+    @Field(name = "username")
+    private String username;
 
-    @Field(name = "resto_id")
-    private Restaurant restaurant;
+    @Field(name = "restaurant_id")
+    private String restaurantId;
 
-    @Field(name = "type")
-    private String type;
+    @Field(name = "status")
+    private String status;
 }

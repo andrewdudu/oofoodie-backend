@@ -18,7 +18,9 @@ public class RestaurantCustomRepositoryImpl implements RestaurantCustomRepositor
     @Override
     public Flux<Restaurant> search(String term) {
         Query query = new Query();
-        Criteria regex = Criteria.where("name").regex(".*" + term + ".*", "i");
+        Criteria regex = Criteria
+                .where("status").is(true)
+                .and("name").regex(".*" + term + ".*", "i");
 
         query.addCriteria(regex);
 

@@ -11,10 +11,6 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Base64;
 
-/**
- * @Author: TCMALTUNKAN - MEHMET ANIL ALTUNKAN
- * @Date: 30.12.2019:09:46, Pzt
- **/
 public class SecurityCipher {
     private static final String KEYVALUE = "secureKey";
     private static SecretKeySpec secretKey;

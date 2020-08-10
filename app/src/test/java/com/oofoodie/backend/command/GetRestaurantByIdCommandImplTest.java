@@ -2,7 +2,10 @@ package com.oofoodie.backend.command;
 
 import com.oofoodie.backend.command.impl.GetRestaurantByIdCommandImpl;
 import com.oofoodie.backend.exception.NotFoundException;
+import com.oofoodie.backend.helper.CalculateRatingStatsHelper;
 import com.oofoodie.backend.models.entity.Restaurant;
+import com.oofoodie.backend.models.entity.Review;
+import com.oofoodie.backend.models.response.RatingStats;
 import com.oofoodie.backend.models.response.RestaurantResponse;
 import com.oofoodie.backend.repository.RestaurantRepository;
 import org.junit.Before;
@@ -15,7 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
 
-import static org.mockito.ArgumentMatchers.anyString;
+import java.util.Arrays;
+
 import static org.mockito.Mockito.*;
 import static org.mockito.MockitoAnnotations.initMocks;
 
@@ -28,6 +32,9 @@ public class GetRestaurantByIdCommandImplTest {
     @Mock
     private RestaurantRepository restaurantRepository;
 
+    @Mock
+    private CalculateRatingStatsHelper calculateRatingStatsHelper;
+
     @AfterEach
     public void afterEach() {
         verifyNoMoreInteractions(restaurantRepository);
@@ -39,7 +46,7 @@ public class GetRestaurantByIdCommandImplTest {
     }
 
     private void mockRepositoryCall(Mono<Restaurant> repositoryResponse) {
-        when(restaurantRepository.findById(anyString()))
+        when(restaurantRepository.findByIdAndStatus("id", true))
                 .thenReturn(repositoryResponse);
     }
 
@@ -54,18 +61,39 @@ public class GetRestaurantByIdCommandImplTest {
     @Test
     public void executeTest() {
         mockRepositoryCall(Mono.just(constructRestaurantObject()));
-        StepVerifier.create(command.execute(anyString()))
+        StepVerifier.create(command.execute("id"))
                 .expectNext(constructRestaurantResponseObject())
                 .verifyComplete();
-        verify(restaurantRepository).findById(anyString());
+        verify(restaurantRepository).findByIdAndStatus("id", true);
+    }
+
+    @Test
+    public void executeTestRatingStatusNotNull() {
+        Restaurant restaurant = constructRestaurantObject();
+        restaurant.setReviews(Arrays.asList(new Review()));
+        when(calculateRatingStatsHelper.calculateRatingStats(restaurant))
+                .thenReturn(new RatingStats());
+        when(restaurantRepository.findByIdAndStatus("id", true))
+                .thenReturn(Mono.just(restaurant));
+
+        StepVerifier.create(command.execute("id"))
+                .expectNext(RestaurantResponse.builder()
+                        .address("street")
+                        .ratingStats(new RatingStats())
+                        .reviews(Arrays.asList(new Review()))
+                        .build())
+                .verifyComplete();
+
+        verify(restaurantRepository).findByIdAndStatus("id", true);
+        verify(calculateRatingStatsHelper).calculateRatingStats(restaurant);
     }
 
     @Test
     public void executeNotFoundTest() {
         mockRepositoryCall(Mono.empty());
-        StepVerifier.create(command.execute(anyString()))
+        StepVerifier.create(command.execute("id"))
                 .expectError(NotFoundException.class)
                 .verify();
-        verify(restaurantRepository).findById(anyString());
+        verify(restaurantRepository).findByIdAndStatus("id", true);
     }
 }
