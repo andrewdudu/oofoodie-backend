@@ -25,14 +25,14 @@ pipeline {
         stage('Build image') {
             steps {
                 dir("app") {
-                    sh 'docker build -t my-app .'
+                    sh 'docker build -t oofoodie .'
                 }
             }
         }
         stage('Run app') {
             steps {
                 dir("app") {
-                    sh 'docker run my-app'
+                    sh 'docker run -p 8080:8989 oofoodie'
                 }
             }
         }
