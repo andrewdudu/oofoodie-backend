@@ -20,7 +20,7 @@ pipeline {
         stage('Run app') {
             steps {
                 dir("app") {
-                    sh 'docker run -p 8989:8080 oofoodie'
+                    sh 'docker run -p 8181:8080 oofoodie'
                 }
             }
         }
